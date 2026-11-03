@@ -9,6 +9,16 @@
 		<link href="https://fonts.googleapis.com/css2?display=swap&family=Bebas+Neue:ital,wght@0,400;1,400&family=Inter:ital,wght@0,200;0,400;0,500;0,700;1,200;1,400;1,500;1,700" rel="stylesheet" type="text/css" />
 		<link rel="stylesheet" href="assets/main.css" />
 		<style>
+			/* Place the circuit pattern behind the phone demos, not the heading. */
+			#container10 { position: relative; isolation: isolate; background-image: none !important; }
+			#container10::before {
+				content: "";
+				position: absolute;
+				inset: 240px 0 0;
+				background: url("assets/images/container10.jpg") center top / cover no-repeat;
+				z-index: -1;
+				pointer-events: none;
+			}
 			/* Keep both hero actions top-aligned and visually balanced. */
 			#container15 > .wrapper > .inner { align-items: flex-start !important; }
 			#container15 > .wrapper > .inner > div { align-self: flex-start !important; }
