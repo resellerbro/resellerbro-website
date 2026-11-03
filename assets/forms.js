@@ -1,0 +1,1 @@
+/* Reseller Bro website form integration placeholder. */
