@@ -536,7 +536,7 @@
 						<div id="container10" data-scroll-id="logic" data-scroll-behavior="default" data-scroll-offset="-5" data-scroll-speed="3" class="container-component instance-10 default full screen">
 							<div class="wrapper">
 								<div class="inner">
-									<p id="text29" class="text-component instance-29"><span class="p"><mark>Bro Lens Logic</mark><br />Intuition Meets Artificial Intelligence</span></p>
+									<p id="text29" class="text-component instance-29"><span class="p"><mark>Bro Lens Logic</mark><br />Profitable enough for YOU. Flip, Skip, Potential Flip, and Inventory.</span></p>
 									<hr id="divider06" class="divider-component instance-6">
 									<div id="embed04" class="embed-component instance-4">
 										<!-- qweoqwupeoiqwuewqe --><!DOCTYPE html>
@@ -550,8 +550,12 @@
 										.rb-phones-container {
 										display: flex;
 										justify-content: center;
-										gap: 60px;
-										flex-wrap: wrap;
+										gap: 20px;
+										flex-wrap: nowrap;
+										align-items: flex-start;
+										width: 100%;
+										max-width: 1100px;
+										margin: 0 auto;
 										font-family: 'Inter', sans-serif;
 										box-sizing: border-box;
 										}
@@ -565,6 +569,8 @@
 										.rb-logic-iphone {
 										position: relative;
 										width: 280px;
+										zoom: .68;
+										flex: 0 0 auto;
 										}
 										
 										.rb-logic-iphone-frame {
@@ -833,57 +839,19 @@
 										border-radius: 0 2px 2px 0;
 										}
 										
-										/* Mobile Responsive */
-										@media (max-width: 768px) {
-										.rb-phones-container {
-										flex-direction: column;
-										align-items: center;
-										gap: 40px;
-										}
-										
-										.rb-logic-iphone {
-										width: 260px;
-										}
-										
-										.rb-logic-iphone-frame {
-										height: 560px;
-										border-radius: 45px;
-										}
-										
-										.rb-logic-iphone-screen {
-										border-radius: 38px;
-										}
-										}
-										
-										@media (max-width: 480px) {
-										.rb-logic-iphone {
-										width: 240px;
-										}
-										
-										.rb-logic-iphone-frame {
-										height: 520px;
-										border-radius: 42px;
-										}
-										
-										.rb-logic-iphone-screen {
-										border-radius: 35px;
-										padding: 12px;
-										}
-										
-										.rb-logic-img {
-										height: 100px;
-										}
-										
-										.rb-logic-result {
-										font-size: 20px;
-										padding: 10px;
-										}
-										
-										.rb-logic-price {
-										font-size: 24px;
-										}
-										}
-										</style>
+										/* Temporary previews for screens awaiting real app screenshots. */
+										.rb-logic-iphone.potential .rb-logic-result{background:#e6b321;color:#111}
+										.rb-logic-iphone.inventory .rb-logic-result{background:#f5871e;color:#111}
+										.rb-logic-iphone.potential .rb-logic-iphone-frame{box-shadow:0 0 0 4px #e6b321,0 0 32px rgba(230,179,33,.25)}
+										.rb-logic-iphone.inventory .rb-logic-iphone-frame{box-shadow:0 0 0 4px #f5871e,0 0 32px rgba(245,135,30,.25)}
+										.rb-logic-preview{margin:60px 0 18px;padding:24px 12px;border:1px dashed #555;border-radius:16px;text-align:center;color:#aaa;font-size:17px;line-height:1.5}
+										.rb-logic-preview strong{display:block;color:#fff;margin-bottom:12px;font-size:19px}
+										.rb-logic-iphone .rb-logic-preview-note{text-align:center;color:#aaa;font-size:12px;margin-top:16px}
+										@media (max-width: 850px) {
+  .rb-phones-container { justify-content: flex-start; overflow-x: auto; gap: 18px; padding: 10px 12px 24px; scroll-snap-type: x mandatory; }
+  .rb-logic-iphone { zoom: .68; scroll-snap-align: start; }
+}
+</style>
 										</head>
 										<body>
 										
@@ -962,6 +930,27 @@
 										</div>
 										</div>
 										
+<!-- POTENTIAL FLIP temporary preview -->
+<div class="rb-logic-iphone potential">
+ <div class="rb-logic-iphone-frame"><div class="rb-logic-iphone-screen">
+ <div class="rb-logic-iphone-notch"></div>
+ <div class="rb-logic-header"><span class="rb-logic-logo">🏷️</span><span class="rb-logic-brand">Reseller <span>Bro</span></span></div>
+ <div class="rb-logic-result">POTENTIAL FLIP</div>
+ <div class="rb-logic-preview"><strong>Opportunity worth checking</strong>More details or verified sales may be needed.</div>
+ <div class="rb-logic-preview-note">Real app screenshot coming soon</div>
+ </div></div>
+</div>
+<!-- INVENTORY temporary preview -->
+<div class="rb-logic-iphone inventory">
+ <div class="rb-logic-iphone-frame"><div class="rb-logic-iphone-screen">
+ <div class="rb-logic-iphone-notch"></div>
+ <div class="rb-logic-header"><span class="rb-logic-logo">🏷️</span><span class="rb-logic-brand">Reseller <span>Bro</span></span></div>
+ <div class="rb-logic-result">INVENTORY</div>
+ <div class="rb-logic-preview"><strong>Save your finds</strong>Keep your scanned items organized in one place.</div>
+ <div class="rb-logic-preview-note">Real app screenshot coming soon</div>
+ </div></div>
+</div>
+
 										</body>
 										</html><!-- mnbnbxmbzxmncbzxc -->
 									</div>
