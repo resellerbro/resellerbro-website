@@ -65,16 +65,20 @@
 			@media (max-width: 480px) {
 				#container09 #buttons05 a.n01, #container09 #buttons01 a.n01 { width: 100% !important; min-height: 60px !important; }
 			}
-			/* Two equal desktop header actions; no changes to other buttons or sections. */
-			#container02 > .wrapper > .inner { display:grid !important; grid-template-columns:auto minmax(0,1fr) auto auto; align-items:center; column-gap:clamp(12px,1.5vw,24px); --gutters:0px; }
-			#container02 > .wrapper > .inner > * { padding:0 !important; min-width:0; }
-			#container02 #links01 { gap:clamp(10px,1.5vw,28px); }
-			#container02 #buttons03 { display:flex !important; flex-wrap:nowrap !important; gap:10px; align-items:center; }
+			/* Preserve original one-row header flex layout; allocate room for two CTAs. */
+			#container02 > .wrapper > .inner { display:flex !important; flex-flow:row nowrap !important; align-items:center !important; justify-content:space-between !important; --gutters:0px; --padding-horizontal:clamp(16px,3vw,48px); gap:clamp(10px,1.5vw,22px); }
+			#container02 > .wrapper > .inner > * { padding:0 !important; margin:0 !important; min-width:0; flex-shrink:0; }
+			#container02 > .wrapper > .inner > :nth-child(1) { width:auto !important; flex:0 0 auto; white-space:nowrap; }
+			#container02 > .wrapper > .inner > :nth-child(2) { display:none !important; }
+			#container02 > .wrapper > .inner > :nth-child(3) { width:auto !important; flex:0 1 auto; margin-left:auto !important; }
+			#container02 > .wrapper > .inner > :nth-child(4) { width:auto !important; flex:0 0 auto; }
+			#container02 #links01 { display:flex !important; flex-wrap:nowrap !important; gap:clamp(10px,1.6vw,24px) !important; white-space:nowrap; font-size:clamp(.85rem,1.2vw,1.1rem) !important; }
+			#container02 #buttons03 { display:flex !important; flex-wrap:nowrap !important; gap:10px !important; align-items:center; }
 			#container02 #buttons03 > li { margin:0 !important; flex:0 0 auto; }
-			#container02 #buttons03 > li > a { display:flex !important; box-sizing:border-box; width:clamp(145px,13.4vw,190px) !important; height:48px !important; padding:0 8px !important; line-height:1.1 !important; font-size:clamp(.8rem,1vw,1rem) !important; align-items:center; justify-content:center; text-align:center; white-space:normal; }
+			#container02 #buttons03 > li > a { display:flex !important; box-sizing:border-box; width:clamp(145px,13vw,185px) !important; height:48px !important; padding:0 8px !important; line-height:1.1 !important; font-size:clamp(.8rem,1vw,1rem) !important; align-items:center; justify-content:center; text-align:center; white-space:normal; }
 			#container02 #buttons03 > li:first-child > a { background:#202020 !important; background-image:none !important; border:1px solid #ff9900 !important; box-shadow:none !important; color:#fff !important; }
 			#container02 #buttons03 > li.rb-founder-nav-item > a { background:#f39800 !important; background-image:none !important; border:1px solid #f39800 !important; color:#fff !important; }
-			@media(max-width:1150px) { #container02 > .wrapper > .inner { --padding-horizontal:1.25rem; column-gap:10px; } #container02 #links01 { gap:12px; font-size:.95em; } #container02 #buttons03 > li > a { width:145px !important; font-size:.8rem !important; } }
+			@media(max-width:1150px) { #container02 #buttons03 > li > a { width:140px !important; font-size:.8rem !important; } #container02 #links01 { gap:10px !important; } }
 			/* White label on the creator/affiliate navigation CTA only. */
 			#buttons03 a.n01 { color: #ffffff !important; }
 			/* Match the affiliate application button label to the white navigation CTA. */
