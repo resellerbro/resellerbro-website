@@ -77,9 +77,14 @@
 			.rb-founding-choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; width: 100%; margin: 1.5rem auto; text-align: center; }
 			.rb-founding-choice { border: 1px solid rgba(255,153,0,.55); border-radius: 12px; padding: 1.25rem; background: #141414; color: #eee; font-family: 'Inter', sans-serif; }
 			.rb-founding-choice-title { font-weight: 700; color: #ff9900; margin-bottom: .75rem; }
-			.rb-founding-choice p { line-height: 1.5; margin-top: .6rem; margin-bottom: .6rem; }
-			.rb-founding-choice-note { font-size: .82rem; color: #bcbcbc; }
-			.rb-founding-pay-disabled { display: block; width: 100%; margin: 1rem auto; padding: .85rem .65rem; border: 0; border-radius: 6px; background: #995d16; color: #fff; font-weight: 700; cursor: not-allowed; opacity: .8; }
+			.rb-founding-choice p { line-height: 1.55; font-size: 1rem; margin-top: .6rem; margin-bottom: .6rem; }
+			.rb-founding-choice .rb-founding-choice-note { font-size: .9rem; color: #bcbcbc; }
+			.rb-founding-pay-disabled { display: block; width: 100%; margin: 1rem auto; padding: .85rem .65rem; border: 0; border-radius: 6px; background: #ff9900; color: #fff; font-weight: 700; cursor: not-allowed; opacity: 1; }
+			
+			.rb-founding-choice-free #form02 { width: 100%; max-width: 100%; margin: 1rem auto 0; }
+			.rb-founding-choice-free #form02 > .inner { width: 100%; }
+			.rb-founding-choice-free #form02 .field, .rb-founding-choice-free #form02 .actions { width: 100%; }
+			.rb-founding-choice-free #form02 .actions button { width: 100%; }
 			@media (max-width: 700px) { .rb-founding-choices { grid-template-columns: 1fr; } }
 			/* All orange CTA links and submit buttons use white labels; preserve loading states. */
 			.buttons-component > li > a,
@@ -1429,8 +1434,6 @@
 											<p class="rb-founding-choice-title">JOIN THE FREE FOUNDING LIST</p>
 											<p>Interested but not ready to pay? Sign up below to hear when founding memberships become available.</p>
 											<p class="rb-founding-choice-note">Free to join. No payment required. Joining the list does not guarantee one of the 100 spots.</p>
-										</div>
-									</div>
 									<form enctype="multipart/form-data" id="form02" method="post" action="#" class="form-component instance-2">
 										<div class="inner">
 											<div class="field" data-type="text">
@@ -1452,6 +1455,9 @@
 										</div>
 										<input type="hidden" name="id" value="form02" />
 									</form>
+										</div>
+									</div>
+
 									<p id="text39" class="text-component instance-39">Free interest list • No payment today • Founding rate applies only after a confirmed paid subscription and lasts while that subscription remains active.</p>
 								</div>
 							</div>
