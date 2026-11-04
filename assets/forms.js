@@ -16,20 +16,15 @@
       const button = form.querySelector('button[type="submit"]');
       if (!button) return;
       const container = document.createElement("div");
-      container.style.cssText = "display:block;width:130px;max-width:100%;margin:8px auto 0;min-height:65px;";
+      container.style.cssText = "margin:12px 0;min-height:65px;";
       const status = document.createElement("p");
       status.setAttribute("role", "status");
       status.setAttribute("aria-live", "polite");
       status.style.cssText = "margin:10px 0;color:#fff;font-size:14px;";
-      button.parentElement.style.display = "flex";
-      button.parentElement.style.flexDirection = "column";
-      button.parentElement.style.alignItems = "center";
-      button.parentElement.appendChild(container);
-      // Keep confirmation directly beneath the submit button, not as a separate flex item.
-      button.parentElement.appendChild(status);
-      status.style.cssText = "display:block;width:100%;margin:10px 0 0;color:#fff;font:500 14px/1.4 Inter,sans-serif;text-align:center;";
+      button.parentElement.before(container);
+      button.parentElement.after(status);
       let widgetId;
-      if (window.turnstile) widgetId = window.turnstile.render(container, { sitekey: SITE_KEY, theme: "dark", size: "compact" });
+      if (window.turnstile) widgetId = window.turnstile.render(container, { sitekey: SITE_KEY, theme: "dark" });
       else status.textContent = "Security verification unavailable. Please reload the page.";
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
@@ -39,7 +34,6 @@
         if (!token) { status.textContent = "Please complete the security verification."; return; }
         button.disabled = true;
         status.textContent = "Sending...";
-        status.style.color = "#fff";
         try {
           const response = await fetch(ENDPOINT, {
             method: "POST",
@@ -49,11 +43,9 @@
           const result = await response.json();
           if (!response.ok || !result.success) throw new Error(result.error || "Submission failed");
           status.textContent = "Thanks! Your submission was received.";
-          status.style.color = "#4ade80";
           form.reset();
         } catch (error) {
           status.textContent = "Unable to submit right now. Please try again.";
-          status.style.color = "#f87171";
           console.error("Reseller Bro form error:", error);
         } finally {
           button.disabled = false;
