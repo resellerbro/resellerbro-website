@@ -76,6 +76,10 @@
 			/* Founding 100 options: scoped styling; preserve existing form behavior. */
 			.rb-founding-choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; width: 100%; margin: 1.5rem auto; text-align: center; }
 			.rb-founding-choice { border: 1px solid rgba(255,153,0,.55); border-radius: 12px; padding: 1.25rem; background: #141414; color: #eee; font-family: 'Inter', sans-serif; }
+			.rb-founding-choices { align-items: stretch; }
+			.rb-founding-choice:not(.rb-founding-choice-free) { display: flex; flex-direction: column; justify-content: center; align-items: stretch; }
+			.rb-founding-choice:not(.rb-founding-choice-free) > * { flex-shrink: 0; }
+			@media (max-width: 700px) { .rb-founding-choice:not(.rb-founding-choice-free) { min-height: 16rem; } }
 			.rb-founding-choice-title { font-weight: 700; color: #ff9900; margin-bottom: .75rem; }
 			.rb-founding-choice p { line-height: 1.55; font-size: 1rem; margin-top: .6rem; margin-bottom: .6rem; }
 			.rb-founding-choice .rb-founding-choice-note { font-size: .9rem; color: #bcbcbc; }
