@@ -1454,7 +1454,7 @@
 													var email = document.getElementById('rb-founding-pay-email').value.trim();
 													var consent = document.getElementById('rb-founding-pay-consent').checked;
 													var status = document.getElementById('rb-founding-pay-status');
-													if (!name || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email) || !consent) { status.textContent = 'Enter your name, valid email, and accept the terms.'; return; }
+													if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !consent) { status.textContent = 'Enter your name, valid email, and accept the terms.'; return; }
 													if (!window.crypto || !crypto.randomUUID) { status.textContent = 'Please use an up-to-date browser.'; return; }
 													button.disabled = true;
 													status.textContent = 'Opening secure Stripe Checkout...';
