@@ -1,4 +1,4 @@
-// Reseller Bro Founding 100 — isolated Cloudflare Worker source.
+// Reseller Bro Founding 500 — isolated Cloudflare Worker source.
 // NOT LIVE: deploy only after configuring D1, Stripe TEST secrets, allowed origin and webhook.
 // Bindings: FOUNDING_DB (D1), STRIPE_SECRET_KEY (secret), STRIPE_WEBHOOK_SECRET (secret),
 // STRIPE_MODE ('test' or 'live'), SITE_ORIGIN ('https://resellerbro.com').
@@ -40,7 +40,7 @@ async function checkout(request,env){
   const reserved=await env.FOUNDING_DB.prepare(`INSERT INTO founding_checkout_holds(checkout_session_id,customer_email,referral_code,expires_at)
     SELECT ?,?,?,datetime('now','+30 minutes') WHERE
     (SELECT COUNT(*) FROM founding_reservations WHERE status='paid' AND stripe_mode=?) +
-    (SELECT COUNT(*) FROM founding_checkout_holds WHERE expires_at > datetime('now')) < 100
+    (SELECT COUNT(*) FROM founding_checkout_holds WHERE expires_at > datetime('now')) < 500
     AND NOT EXISTS (SELECT 1 FROM founding_reservations WHERE lower(customer_email)=? AND status='paid' AND stripe_mode=?)
     AND NOT EXISTS (SELECT 1 FROM founding_checkout_holds WHERE lower(customer_email)=? AND expires_at > datetime('now'))
     ON CONFLICT(checkout_session_id) DO NOTHING`).bind(hold,email,referral,env.STRIPE_MODE,email,env.STRIPE_MODE,email).run();
@@ -52,7 +52,7 @@ async function checkout(request,env){
     const p=new URLSearchParams();
     p.set('mode','payment');p.set('customer_email',email);p.set('client_reference_id',token);
     p.set('line_items[0][price_data][currency]','usd');p.set('line_items[0][price_data][unit_amount]','799');
-    p.set('line_items[0][price_data][product_data][name]','Reseller Bro — Founding 100 Reservation');
+    p.set('line_items[0][price_data][product_data][name]','Reseller Bro — Founding 500 Reservation');
     p.set('line_items[0][quantity]','1');
     p.set('metadata[resellerbro_reservation]','founding100');
     p.set('metadata[reservation_hold]',hold);p.set('metadata[referral_code]',referral);
@@ -74,11 +74,11 @@ async function notifyFounder(env,sessionId){
   if(!row)return;
   const numberRow=await env.FOUNDING_DB.prepare("SELECT COUNT(*) AS n FROM founding_reservations WHERE status='paid' AND stripe_mode=? AND id<=?").bind(env.STRIPE_MODE,row.id).first();
   const founderNumber=Number(numberRow?.n||0);
-  if(founderNumber<1||founderNumber>100)throw Error('Invalid founder number for email');
+  if(founderNumber<1||founderNumber>500)throw Error('Invalid founder number for email');
   const name=str(row.customer_name,200)||'Reseller Bro Founder';
   const recipients=[
-    {kind:'welcome',to:row.customer_email,subject:'Welcome to the Reseller Bro Founding 100!',html:`<p>Hey ${emailEscape(name)},</p><p>Welcome to the <strong>Reseller Bro Founding 100!</strong> You're Founder #${founderNumber}.</p><p>Your $7.99 reservation was received and will be credited toward your first subscription month when we launch. Your founding $7.99/month rate stays in effect while your subscription remains active.</p><p>We'll email you when Reseller Bro is ready to launch. Thanks for joining the original crew!</p><p>— Reseller Bro</p>`},
-    {kind:'owner',to:'joe@resellerbro.com',subject:`New Reseller Bro Founder #${founderNumber}`,html:`<p>New paid Founding 100 reservation.</p><p>Founder #${founderNumber}<br>Name: ${emailEscape(name)}<br>Email: ${emailEscape(row.customer_email)}<br>Payment: $7.99</p>`}
+    {kind:'welcome',to:row.customer_email,subject:'Welcome to the Reseller Bro Founding 500!',html:`<p>Hey ${emailEscape(name)},</p><p>Welcome to the <strong>Reseller Bro Founding 500!</strong> You're Founder #${founderNumber}.</p><p>Your $7.99 reservation was received and will be credited toward your first subscription month when we launch. Your founding $7.99/month rate stays in effect while your subscription remains active.</p><p>We'll email you when Reseller Bro is ready to launch. Thanks for joining the original crew!</p><p>— Reseller Bro</p>`},
+    {kind:'owner',to:'joe@resellerbro.com',subject:`New Reseller Bro Founder #${founderNumber}`,html:`<p>New paid Founding 500 reservation.</p><p>Founder #${founderNumber}<br>Name: ${emailEscape(name)}<br>Email: ${emailEscape(row.customer_email)}<br>Payment: $7.99</p>`}
   ];
   for(const message of recipients){
     const sent=await env.FOUNDING_DB.prepare('SELECT 1 FROM founding_email_deliveries WHERE reservation_id=? AND email_kind=?').bind(row.id,message.kind).first();
@@ -108,7 +108,7 @@ async function webhook(request,env){
     console.error('Unrecognized or expired hold for paid checkout',s.id);return reply({error:'Payment requires manual reconciliation'},500);
   }
   try{
-    // D1 batch is transactional. Database triggers enforce <=100 paid members and unique paid email.
+    // D1 batch is transactional. Database triggers enforce <=500 paid members and unique paid email.
     await env.FOUNDING_DB.batch([
       env.FOUNDING_DB.prepare("INSERT INTO founding_reservations(stripe_checkout_session_id,stripe_payment_intent_id,stripe_customer_id,customer_email,customer_name,referral_code,amount_paid_cents,currency,status,stripe_mode) VALUES (?,?,?,?,?,?,?,?,?,?) ON CONFLICT(stripe_checkout_session_id) DO NOTHING").bind(s.id,typeof s.payment_intent==='string'?s.payment_intent:null,typeof s.customer==='string'?s.customer:null,email,str(s.customer_details?.name,200),hold.referral_code||'',799,'usd','paid',env.STRIPE_MODE),
       env.FOUNDING_DB.prepare('DELETE FROM founding_checkout_holds WHERE checkout_session_id=?').bind(s.id),
@@ -132,7 +132,7 @@ async function confirmation(request,env){
   if(session.payment_status!=='paid'||session.amount_total!==799||session.currency!=='usd'||session.mode!=='payment'||session.metadata?.resellerbro_reservation!=='founding100')return reply({confirmed:false,pending:true});
   const count=await env.FOUNDING_DB.prepare("SELECT COUNT(*) AS n FROM founding_reservations WHERE status='paid' AND stripe_mode=? AND id<=?").bind(env.STRIPE_MODE,row.id).first();
   const number=Number(count?.n||0);
-  return reply({confirmed:true,member_number:number>=1&&number<=100?number:null,name:str(row.customer_name,200),amount_paid_cents:Number(row.amount_paid_cents),first_month_credit_cents:Number(row.first_month_credit_cents)});
+  return reply({confirmed:true,member_number:number>=1&&number<=500?number:null,name:str(row.customer_name,200),amount_paid_cents:Number(row.amount_paid_cents),first_month_credit_cents:Number(row.first_month_credit_cents)});
 }
 
 export default {async fetch(request,env){
@@ -142,13 +142,13 @@ export default {async fetch(request,env){
     return new Response(null,{status:204,headers:{'access-control-allow-origin':env.SITE_ORIGIN,'access-control-allow-methods':'POST, OPTIONS','access-control-allow-headers':'content-type','access-control-max-age':'600','vary':'Origin'}});
   }
   if(!isConfigured(env))return reply({error:'Payment integration not configured'},503);
-  if(path==='/founding/test'&&request.method==='GET'&&env.STRIPE_MODE==='test')return new Response("<!doctype html><html lang=\"en\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Founding 100 — Sandbox Test</title><style>body{background:#101014;color:#f5f5f5;font:16px system-ui;margin:0;padding:40px 18px}main{max-width:430px;margin:auto}h1{color:#ff9b25}label{display:block;margin:20px 0 6px}input{box-sizing:border-box;width:100%;padding:13px;border:1px solid #777;border-radius:8px;background:#222;color:white}button{background:#ff9b25;border:0;border-radius:8px;padding:15px;width:100%;margin-top:24px;font-weight:700;cursor:pointer}small{color:#bcbcbc}#status{min-height:28px;color:#ffd08b}</style><main><h1>Founding 100</h1><p><strong>STRIPE SANDBOX — NO REAL MONEY</strong></p><p>Test the $7.99 reservation checkout. This page is separate from the live website.</p><form id=\"form\"><label for=\"name\">Test name</label><input id=\"name\" autocomplete=\"name\" required maxlength=\"200\" value=\"Founding Test\"><label for=\"email\">Test email</label><input id=\"email\" type=\"email\" autocomplete=\"email\" required maxlength=\"254\" placeholder=\"test@example.com\"><button id=\"go\" type=\"submit\">Open $7.99 test checkout</button></form><p id=\"status\" role=\"status\"></p><small>Use Stripe test card 4242 4242 4242 4242, any future expiration, and any CVC. Do not use a real card.</small></main><script>document.getElementById('form').addEventListener('submit',async e=>{e.preventDefault();const b=document.getElementById('go'),s=document.getElementById('status');b.disabled=true;s.textContent='Creating secure Stripe test checkout...';try{const r=await fetch('/founding/checkout',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name:document.getElementById('name').value,email:document.getElementById('email').value,request_id:crypto.randomUUID()})});const d=await r.json();if(!r.ok||!d.url)throw Error(d.error||'Checkout unavailable');const u=new URL(d.url);if(u.protocol!=='https:'||!u.hostname.endsWith('.stripe.com'))throw Error('Unexpected checkout destination');location.assign(d.url)}catch(err){s.textContent=err.message;b.disabled=false}})</script></html>",{headers:{'content-type':'text/html; charset=utf-8','cache-control':'no-store','x-robots-tag':'noindex, nofollow','content-security-policy':"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'"}});
+  if(path==='/founding/test'&&request.method==='GET'&&env.STRIPE_MODE==='test')return new Response("<!doctype html><html lang=\"en\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Founding 500 — Sandbox Test</title><style>body{background:#101014;color:#f5f5f5;font:16px system-ui;margin:0;padding:40px 18px}main{max-width:430px;margin:auto}h1{color:#ff9b25}label{display:block;margin:20px 0 6px}input{box-sizing:border-box;width:100%;padding:13px;border:1px solid #777;border-radius:8px;background:#222;color:white}button{background:#ff9b25;border:0;border-radius:8px;padding:15px;width:100%;margin-top:24px;font-weight:700;cursor:pointer}small{color:#bcbcbc}#status{min-height:28px;color:#ffd08b}</style><main><h1>Founding 500</h1><p><strong>STRIPE SANDBOX — NO REAL MONEY</strong></p><p>Test the $7.99 reservation checkout. This page is separate from the live website.</p><form id=\"form\"><label for=\"name\">Test name</label><input id=\"name\" autocomplete=\"name\" required maxlength=\"200\" value=\"Founding Test\"><label for=\"email\">Test email</label><input id=\"email\" type=\"email\" autocomplete=\"email\" required maxlength=\"254\" placeholder=\"test@example.com\"><button id=\"go\" type=\"submit\">Open $7.99 test checkout</button></form><p id=\"status\" role=\"status\"></p><small>Use Stripe test card 4242 4242 4242 4242, any future expiration, and any CVC. Do not use a real card.</small></main><script>document.getElementById('form').addEventListener('submit',async e=>{e.preventDefault();const b=document.getElementById('go'),s=document.getElementById('status');b.disabled=true;s.textContent='Creating secure Stripe test checkout...';try{const r=await fetch('/founding/checkout',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name:document.getElementById('name').value,email:document.getElementById('email').value,request_id:crypto.randomUUID()})});const d=await r.json();if(!r.ok||!d.url)throw Error(d.error||'Checkout unavailable');const u=new URL(d.url);if(u.protocol!=='https:'||!u.hostname.endsWith('.stripe.com'))throw Error('Unexpected checkout destination');location.assign(d.url)}catch(err){s.textContent=err.message;b.disabled=false}})</script></html>",{headers:{'content-type':'text/html; charset=utf-8','cache-control':'no-store','x-robots-tag':'noindex, nofollow','content-security-policy':"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'"}});
   if(path==='/stripe/webhook'&&request.method==='POST')return webhook(request,env);
   if(path==='/founding/checkout'&&request.method==='POST')return checkout(request,env);
   if(path==='/founding/confirmation'&&request.method==='GET')return confirmation(request,env);
   if(path==='/founding/availability'&&request.method==='GET'){
     const row=await env.FOUNDING_DB.prepare("SELECT (SELECT COUNT(*) FROM founding_reservations WHERE status='paid' AND stripe_mode=?) paid, (SELECT COUNT(*) FROM founding_checkout_holds WHERE expires_at > datetime('now')) held").bind(env.STRIPE_MODE).first();
-    return reply({available:Math.max(0,100-Number(row.paid||0)-Number(row.held||0))});
+    return reply({available:Math.max(0,500-Number(row.paid||0)-Number(row.held||0))});
   }
   return reply({error:'Not found'},404);
 }};
