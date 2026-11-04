@@ -16,13 +16,15 @@
       const button = form.querySelector('button[type="submit"]');
       if (!button) return;
       const container = document.createElement("div");
-      container.style.cssText = "margin:12px 0;min-height:65px;";
+      container.style.cssText = "display:block;clear:both;width:300px;max-width:100%;margin:14px auto 8px;min-height:65px;position:relative;";
       const status = document.createElement("p");
       status.setAttribute("role", "status");
       status.setAttribute("aria-live", "polite");
       status.style.cssText = "margin:10px 0;color:#fff;font-size:14px;";
-      button.parentElement.before(container);
-      button.parentElement.after(status);
+      // Keep verification outside the form's button row to prevent overlap.
+      form.after(container);
+      container.after(status);
+      status.style.textAlign = "center";
       let widgetId;
       if (window.turnstile) widgetId = window.turnstile.render(container, { sitekey: SITE_KEY, theme: "dark" });
       else status.textContent = "Security verification unavailable. Please reload the page.";
