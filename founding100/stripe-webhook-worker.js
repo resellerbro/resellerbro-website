@@ -79,7 +79,11 @@ async function webhook(request,env){
   const email=str(s.customer_details?.email,254).toLowerCase();
   if(!email)return reply({error:'Missing email'},422);
   const hold=await env.FOUNDING_DB.prepare('SELECT checkout_session_id,referral_code FROM founding_checkout_holds WHERE checkout_session_id=?').bind(s.id).first();
-  if(!hold){console.error('Unrecognized or expired hold for paid checkout',s.id);return reply({error:'Payment requires manual reconciliation'},500);}
+  if(!hold){
+    const recorded=await env.FOUNDING_DB.prepare('SELECT id FROM founding_reservations WHERE stripe_checkout_session_id=? AND status=? AND stripe_mode=?').bind(s.id,'paid',env.STRIPE_MODE).first();
+    if(recorded){await env.FOUNDING_DB.prepare('INSERT OR IGNORE INTO founding_webhook_events(stripe_event_id,event_type,stripe_mode) VALUES(?,?,?)').bind(event.id,event.type,env.STRIPE_MODE).run();return reply({received:true});}
+    console.error('Unrecognized or expired hold for paid checkout',s.id);return reply({error:'Payment requires manual reconciliation'},500);
+  }
   try{
     // D1 batch is transactional. Database triggers enforce <=100 paid members and unique paid email.
     await env.FOUNDING_DB.batch([
