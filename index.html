@@ -79,6 +79,14 @@
 			#container02 #buttons03 > li:first-child > a { background:#202020 !important; background-image:none !important; border:1px solid #ff9900 !important; box-shadow:none !important; color:#fff !important; }
 			#container02 #buttons03 > li.rb-founder-nav-item > a { background:#f39800 !important; background-image:none !important; border:1px solid #f39800 !important; color:#fff !important; }
 			@media(max-width:1150px) { #container02 #buttons03 > li > a { width:140px !important; font-size:.8rem !important; } #container02 #links01 { gap:10px !important; } }
+			/* Final approved header: compact nav with slim orange separators and balanced CTAs. */
+			#container02 #links01 { gap:0 !important; font-size:clamp(.85rem,1.12vw,1.02rem) !important; letter-spacing:0 !important; }
+			#container02 #links01 > li { display:flex; align-items:center; margin:0 !important; }
+			#container02 #links01 > li:not(:last-child)::after { content:""; display:block; height:18px; width:1px; background:#ff9900; margin:0 clamp(12px,1.45vw,20px); }
+			#container02 #links01 > li > a { color:#f4f4f4 !important; font-weight:600; }
+			#container02 #buttons03 > li > a { width:clamp(165px,14.5vw,205px) !important; height:48px !important; font-size:clamp(.83rem,1.08vw,1.05rem) !important; }
+			#container02 #buttons03 > li:first-child > a { border-width:2px !important; }
+			@media(max-width:1150px) { #container02 #buttons03 > li > a { width:145px !important; font-size:.8rem !important; } #container02 #links01 > li:not(:last-child)::after { margin:0 9px; } }
 			/* White label on the creator/affiliate navigation CTA only. */
 			#buttons03 a.n01 { color: #ffffff !important; }
 			/* Match the affiliate application button label to the white navigation CTA. */
