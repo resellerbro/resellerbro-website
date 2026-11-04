@@ -22,7 +22,9 @@
       status.setAttribute("aria-live", "polite");
       status.style.cssText = "margin:10px 0;color:#fff;font-size:14px;";
       button.parentElement.before(container);
-      button.parentElement.after(status);
+      // Keep confirmation directly beneath the submit button, not as a separate flex item.
+      button.parentElement.appendChild(status);
+      status.style.cssText = "display:block;width:100%;margin:10px 0 0;color:#fff;font:500 14px/1.4 Inter,sans-serif;text-align:center;";
       let widgetId;
       if (window.turnstile) widgetId = window.turnstile.render(container, { sitekey: SITE_KEY, theme: "dark" });
       else status.textContent = "Security verification unavailable. Please reload the page.";
@@ -34,6 +36,7 @@
         if (!token) { status.textContent = "Please complete the security verification."; return; }
         button.disabled = true;
         status.textContent = "Sending...";
+        status.style.color = "#fff";
         try {
           const response = await fetch(ENDPOINT, {
             method: "POST",
@@ -43,9 +46,11 @@
           const result = await response.json();
           if (!response.ok || !result.success) throw new Error(result.error || "Submission failed");
           status.textContent = "Thanks! Your submission was received.";
+          status.style.color = "#4ade80";
           form.reset();
         } catch (error) {
           status.textContent = "Unable to submit right now. Please try again.";
+          status.style.color = "#f87171";
           console.error("Reseller Bro form error:", error);
         } finally {
           button.disabled = false;
