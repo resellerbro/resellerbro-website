@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "resellerbro-founding100-test",
+  "main": "stripe-webhook-worker.js",
+  "compatibility_date": "2026-11-03",
+  "workers_dev": true,
+  "vars": {
+    "STRIPE_MODE": "test",
+    "SITE_ORIGIN": "https://resellerbro.com"
+  },
+  "d1_databases": [
+    {
+      "binding": "FOUNDING_DB",
+      "database_name": "resellerbro-founding-reservations",
+      "database_id": "72783954-4ddb-4b15-8a01-68803252811a"
+    }
+  ]
+}
