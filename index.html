@@ -72,6 +72,15 @@
 			/* Tighten the gap before the final Daily Grind signup without changing type styles. */
 			#container17 > .wrapper > .inner { padding-top: 1.25rem !important; padding-bottom: 1.25rem !important; }
 			#container04 > .wrapper > .inner { padding-top: 2.5rem !important; }
+			
+			/* Founding 100 options: scoped styling; preserve existing form behavior. */
+			.rb-founding-choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; width: 100%; margin: 1.5rem auto; text-align: center; }
+			.rb-founding-choice { border: 1px solid rgba(255,153,0,.55); border-radius: 12px; padding: 1.25rem; background: #141414; color: #eee; font-family: 'Inter', sans-serif; }
+			.rb-founding-choice-title { font-weight: 700; color: #ff9900; margin-bottom: .75rem; }
+			.rb-founding-choice p { line-height: 1.5; margin-top: .6rem; margin-bottom: .6rem; }
+			.rb-founding-choice-note { font-size: .82rem; color: #bcbcbc; }
+			.rb-founding-pay-disabled { display: block; width: 100%; margin: 1rem auto; padding: .85rem .65rem; border: 0; border-radius: 6px; background: #995d16; color: #fff; font-weight: 700; cursor: not-allowed; opacity: .8; }
+			@media (max-width: 700px) { .rb-founding-choices { grid-template-columns: 1fr; } }
 			/* All orange CTA links and submit buttons use white labels; preserve loading states. */
 			.buttons-component > li > a,
 			.form-component .actions button:not(.waiting) { color: #ffffff !important; }
@@ -1408,7 +1417,20 @@
 								<div class="inner">
 									<p id="text44" class="text-component instance-44"><mark>FOUNDING RATE RESERVED FOR FIRST 100 PAID MEMBERS</mark></p>
 									<p id="text22" class="text-component instance-22">Join <mark>THE FOUNDING 100</mark></p>
-									<p id="text08" class="text-component instance-8"><strong>$7.99/month — your founding rate, locked in for life.</strong> The first 100 paying subscribers can keep this monthly price for as long as their subscription remains active. Future subscribers may pay more. Join the interest list now; free beta comes first and no payment is collected today.</p>
+									<p id="text08" class="text-component instance-8"><strong>$7.99/month — your founding rate while subscribed.</strong> Limited to the first 100 confirmed paid founding memberships. Free beta comes first. Choose how you would like to join below.</p>
+									<div class="rb-founding-choices" aria-label="Founding 100 membership options">
+										<div class="rb-founding-choice">
+											<p class="rb-founding-choice-title">SECURE YOUR FOUNDING SPOT</p>
+											<p>Reserve a founding membership for $7.99, credited toward your first month when paid access launches.</p>
+											<button type="button" disabled aria-disabled="true" class="rb-founding-pay-disabled">[ SECURE MY SPOT — $7.99 ]</button>
+											<p class="rb-founding-choice-note">Payment option coming soon. No charge today. Reservation and refund terms will be provided before checkout opens.</p>
+										</div>
+										<div class="rb-founding-choice rb-founding-choice-free">
+											<p class="rb-founding-choice-title">JOIN THE FREE FOUNDING LIST</p>
+											<p>Interested but not ready to pay? Sign up below to hear when founding memberships become available.</p>
+											<p class="rb-founding-choice-note">Free to join. No payment required. Joining the list does not guarantee one of the 100 spots.</p>
+										</div>
+									</div>
 									<form enctype="multipart/form-data" id="form02" method="post" action="#" class="form-component instance-2">
 										<div class="inner">
 											<div class="field" data-type="text">
@@ -1425,12 +1447,12 @@
 												</select>
 											</div>
 											<div class="actions">
-												<button type="submit">[ JOIN THE FOUNDING 100 LIST ]</button>
+												<button type="submit">[ JOIN THE FREE FOUNDING LIST ]</button>
 											</div>
 										</div>
 										<input type="hidden" name="id" value="form02" />
 									</form>
-									<p id="text39" class="text-component instance-39">No payment today • No spam • Grandfathered rate applies while your future paid subscription stays active; cancellation ends the rate guarantee.</p>
+									<p id="text39" class="text-component instance-39">Free interest list • No payment today • Founding rate applies only after a confirmed paid subscription and lasts while that subscription remains active.</p>
 								</div>
 							</div>
 						</div>
