@@ -16,7 +16,7 @@
       const button = form.querySelector('button[type="submit"]');
       if (!button) return;
       const container = document.createElement("div");
-      container.style.cssText = "display:block;width:130px;max-width:100%;margin:8px auto 0;min-height:65px;";
+      container.style.cssText = "display:none;width:0;height:0;overflow:hidden;";
       const status = document.createElement("p");
       status.setAttribute("role", "status");
       status.setAttribute("aria-live", "polite");
@@ -29,7 +29,7 @@
       button.parentElement.appendChild(status);
       status.style.cssText = "display:block;width:100%;margin:10px 0 0;color:#fff;font:500 14px/1.4 Inter,sans-serif;text-align:center;";
       let widgetId;
-      if (window.turnstile) widgetId = window.turnstile.render(container, { sitekey: SITE_KEY, theme: "dark", size: "compact" });
+      if (window.turnstile) widgetId = window.turnstile.render(container, { sitekey: SITE_KEY, theme: "dark", size: "invisible" });
       else status.textContent = "Security verification unavailable. Please reload the page.";
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
