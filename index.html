@@ -1624,6 +1624,59 @@
 				</div>
 			</div>
 		</div>
+		<style>
+			#rb-founders-confirmation[hidden] { display:none!important; }
+			#rb-founders-confirmation { position:fixed; inset:0; z-index:99999; overflow:auto; background:rgba(5,5,7,.97); color:#fff; display:grid; place-items:center; padding:24px; font-family:Inter,system-ui,sans-serif; }
+			#rb-founders-confirmation .rb-confirm-card { max-width:560px; width:100%; box-sizing:border-box; border:2px solid #ff9900; border-radius:20px; background:#171717; padding:clamp(24px,5vw,44px); text-align:center; box-shadow:0 0 55px rgba(255,153,0,.2); position:relative; z-index:1; }
+			#rb-founders-confirmation h2 { color:#ff9900; font-size:clamp(28px,5vw,42px); line-height:1.15; margin:12px 0; }
+			#rb-founders-confirmation p { line-height:1.6; margin:12px 0; }
+			#rb-founders-confirmation .rb-member-badge { display:inline-block; border:1px solid #ff9900; border-radius:999px; padding:9px 18px; color:#ffbb56; font-weight:800; letter-spacing:.06em; }
+			#rb-founders-confirmation button { margin-top:18px; padding:13px 20px; background:#ff9900; border:0; border-radius:8px; color:#111; font-weight:800; cursor:pointer; }
+			#rb-founders-confirmation .rb-confetti { position:fixed; top:-10vh; width:9px; height:15px; pointer-events:none; animation:rb-confetti-fall 3.6s linear forwards; }
+			@keyframes rb-confetti-fall { to { transform:translate3d(0,115vh,0) rotate(720deg); opacity:0; } }
+			@media (prefers-reduced-motion:reduce) { #rb-founders-confirmation .rb-confetti { animation:none; display:none; } }
+		</style>
+		<div id="rb-founders-confirmation" hidden role="dialog" aria-modal="true" aria-labelledby="rb-confirm-title">
+			<div class="rb-confirm-card">
+				<div style="font-size:44px" aria-hidden="true">🎉</div>
+				<div id="rb-confirm-badge" class="rb-member-badge">FOUNDING 100 MEMBER</div>
+				<h2 id="rb-confirm-title">YOU'RE OFFICIALLY ONE OF THE FOUNDING 100!</h2>
+				<p id="rb-confirm-name"></p>
+				<p>Welcome to Reseller Bro! Your <strong>$7.99 reservation</strong> is confirmed, and your <strong>$7.99/month founding rate</strong> is locked in while your membership remains active.</p>
+				<p>Your reservation payment will be credited toward your first paid month when we launch. No recurring charge starts today.</p>
+				<p style="color:#ffbb56;font-weight:700">You're part of the original crew. 👊</p>
+				<button id="rb-confirm-close" type="button">VIEW RESELLER BRO WEBSITE</button>
+			</div>
+		</div>
+		<script>
+		(function(){
+			var params=new URLSearchParams(location.search);
+			if(params.get('founding_checkout')!=='success')return;
+			var id=params.get('session_id')||'';
+			var overlay=document.getElementById('rb-founders-confirmation');
+			if(!overlay||!/^cs_(test_|live_)[A-Za-z0-9]{10,}$/.test(id))return;
+			var attempts=0;
+			async function verify(){
+				try{
+					var response=await fetch('https://dark-shape-f2a6.gisttttt.workers.dev/founding/confirmation?session_id='+encodeURIComponent(id),{cache:'no-store'});
+					if(!response.ok)throw Error('Verification unavailable');
+					var data=await response.json();
+					if(!data.confirmed){if(++attempts<6)setTimeout(verify,2000);return;}
+					document.getElementById('rb-confirm-name').textContent=data.name?'Congratulations, '+data.name+'!':'';
+					if(Number.isInteger(data.member_number)&&data.member_number>=1&&data.member_number<=100)document.getElementById('rb-confirm-badge').textContent='FOUNDING MEMBER #'+String(data.member_number).padStart(3,'0');
+					overlay.hidden=false;
+					if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+						for(var i=0;i<45;i++){
+							var piece=document.createElement('span');piece.className='rb-confetti';piece.style.left=Math.random()*100+'vw';piece.style.background=['#ff9900','#ffd166','#ffffff','#f85b4d'][i%4];piece.style.animationDelay=Math.random()*1.5+'s';piece.style.transform='rotate('+Math.random()*360+'deg)';overlay.appendChild(piece);
+							piece.addEventListener('animationend',function(){this.remove();});
+						}
+					}
+				}catch(e){if(++attempts<6)setTimeout(verify,2000);}
+			}
+			document.getElementById('rb-confirm-close').addEventListener('click',function(){overlay.hidden=true;history.replaceState(null,'',location.pathname+'#flip');});
+			verify();
+		})();
+		</script>
 		<script src="https://js.stripe.com/v3/"></script>
 		<script src="assets/main.js"></script>
 		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" defer></script>
