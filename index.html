@@ -1425,7 +1425,25 @@
 									<div class="rb-founding-single" aria-label="Founding 100 membership options">
 										<p class="rb-founding-single-title">SECURE YOUR FOUNDING SPOT</p>
 										<p>Reserve a founding membership for $7.99, credited toward your first month when paid access launches.</p>
-										<button type="button" disabled aria-disabled="true" class="rb-founding-pay-disabled">[ SECURE MY SPOT — $7.99 ]</button>
+										<button type="button" disabled aria-disabled="true" class="rb-founding-pay-disabled" id="rb-founding-reserve-button">[ SECURE MY SPOT — $7.99 ]</button>
+										<script>
+										(function () {
+											// Sandbox checkout is available only when explicitly requested by the site tester.
+											// Do not enable production payments without a verified reservation backend.
+											var params = new URLSearchParams(window.location.search);
+											if (params.get('stripe_test') !== '1') return;
+											var button = document.getElementById('rb-founding-reserve-button');
+											if (!button) return;
+											button.disabled = false;
+											button.removeAttribute('aria-disabled');
+											button.textContent = '[ TEST $7.99 CHECKOUT — NO REAL CHARGE ]';
+											button.addEventListener('click', function () {
+												window.location.assign('https://buy.stripe.com/test_4gM6oH8GfaUegHV95zcV200');
+											});
+											var note = button.nextElementSibling;
+											if (note) note.textContent = 'SANDBOX TEST ONLY — no real charge or founding membership reservation.';
+										})();
+										</script>
 										<p class="rb-founding-single-note">Payment option coming soon. No charge today. Reservation and refund terms will be provided before checkout opens.</p>
 										<div class="rb-founding-divider"><span>OR JOIN THE FREE LIST</span></div>
 										<p>Not ready to pay? Join our free interest list for launch updates and the chance to become one of the Founding 100.</p>
