@@ -26,7 +26,9 @@ async function stripe(env,path,params){
 }
 async function releaseHold(db,id){await db.prepare('DELETE FROM founding_checkout_holds WHERE checkout_session_id=?').bind(id).run();}
 async function checkout(request,env){
-  if(request.headers.get('origin')!==env.SITE_ORIGIN)return reply({error:'Invalid origin'},403);
+  const origin=request.headers.get('origin');
+  const sandboxOrigin='https://resellerbro-founding100-test.gisttttt.workers.dev';
+  if(origin!==env.SITE_ORIGIN && !(env.STRIPE_MODE==='test' && origin===sandboxOrigin))return reply({error:'Invalid origin'},403);
   let payload;try{payload=await request.json();}catch{return reply({error:'Invalid JSON'},400);}
   const email=str(payload.email,254).toLowerCase(),name=str(payload.name,200),referral=str(payload.referral_code,64).toUpperCase();
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return reply({error:'Valid email required'},400);
