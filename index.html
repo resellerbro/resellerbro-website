@@ -1650,11 +1650,34 @@
 		<script>
 		(function(){
 			var params=new URLSearchParams(location.search);
-			if(params.get('founding_checkout')!=='success')return;
+			var preview=params.get('celebration_preview')==='1';
+			if(!preview&&params.get('founding_checkout')!=='success')return;
 			var id=params.get('session_id')||'';
 			var overlay=document.getElementById('rb-founders-confirmation');
-			if(!overlay||!/^cs_(test_|live_)[A-Za-z0-9]{10,}$/.test(id))return;
+			if(!overlay||(!preview&&!/^cs_(test_|live_)[A-Za-z0-9]{10,}$/.test(id)))return;
 			var attempts=0;
+			function showCelebration(){
+				overlay.hidden=false;
+				if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+					for(var i=0;i<45;i++){
+						var piece=document.createElement('span');piece.className='rb-confetti';piece.style.left=Math.random()*100+'vw';piece.style.background=['#ff9900','#ffd166','#ffffff','#f85b4d'][i%4];piece.style.animationDelay=Math.random()*1.5+'s';piece.style.transform='rotate('+Math.random()*360+'deg)';overlay.appendChild(piece);
+						piece.addEventListener('animationend',function(){this.remove();});
+					}
+				}
+			}
+			if(preview){
+				document.getElementById('rb-confirm-badge').textContent='PREVIEW ONLY — SAMPLE MEMBER #001';
+				document.getElementById('rb-confirm-title').textContent='FOUNDING 100 CELEBRATION PREVIEW';
+				document.getElementById('rb-confirm-name').textContent='Congratulations! This is a visual demonstration only.';
+				var card=overlay.querySelector('.rb-confirm-card');
+				var notice=document.createElement('p');
+				notice.textContent='DEMO ONLY — No payment has been made, no reservation is confirmed, and no membership number has been assigned.';
+				notice.style.cssText='color:#ffbb56;font-weight:800';
+				card.insertBefore(notice,card.querySelector('#rb-confirm-close'));
+				showCelebration();
+				document.getElementById('rb-confirm-close').addEventListener('click',function(){overlay.hidden=true;history.replaceState(null,'',location.pathname+'#flip');});
+				return;
+			}
 			async function verify(){
 				try{
 					var response=await fetch('https://dark-shape-f2a6.gisttttt.workers.dev/founding/confirmation?session_id='+encodeURIComponent(id),{cache:'no-store'});
@@ -1663,13 +1686,7 @@
 					if(!data.confirmed){if(++attempts<6)setTimeout(verify,2000);return;}
 					document.getElementById('rb-confirm-name').textContent=data.name?'Congratulations, '+data.name+'!':'';
 					if(Number.isInteger(data.member_number)&&data.member_number>=1&&data.member_number<=100)document.getElementById('rb-confirm-badge').textContent='FOUNDING MEMBER #'+String(data.member_number).padStart(3,'0');
-					overlay.hidden=false;
-					if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-						for(var i=0;i<45;i++){
-							var piece=document.createElement('span');piece.className='rb-confetti';piece.style.left=Math.random()*100+'vw';piece.style.background=['#ff9900','#ffd166','#ffffff','#f85b4d'][i%4];piece.style.animationDelay=Math.random()*1.5+'s';piece.style.transform='rotate('+Math.random()*360+'deg)';overlay.appendChild(piece);
-							piece.addEventListener('animationend',function(){this.remove();});
-						}
-					}
+					showCelebration();
 				}catch(e){if(++attempts<6)setTimeout(verify,2000);}
 			}
 			document.getElementById('rb-confirm-close').addEventListener('click',function(){overlay.hidden=true;history.replaceState(null,'',location.pathname+'#flip');});
