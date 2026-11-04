@@ -42,7 +42,8 @@ async function checkout(request,env){
     (SELECT COUNT(*) FROM founding_reservations WHERE status='paid' AND stripe_mode=?) +
     (SELECT COUNT(*) FROM founding_checkout_holds WHERE expires_at > datetime('now')) < 100
     AND NOT EXISTS (SELECT 1 FROM founding_reservations WHERE lower(customer_email)=? AND status='paid' AND stripe_mode=?)
-    ON CONFLICT(checkout_session_id) DO NOTHING`).bind(hold,email,referral,env.STRIPE_MODE,email,env.STRIPE_MODE).run();
+    AND NOT EXISTS (SELECT 1 FROM founding_checkout_holds WHERE lower(customer_email)=? AND expires_at > datetime('now'))
+    ON CONFLICT(checkout_session_id) DO NOTHING`).bind(hold,email,referral,env.STRIPE_MODE,email,env.STRIPE_MODE,email).run();
   if(!reserved.meta?.changes){
     const existing=await env.FOUNDING_DB.prepare('SELECT checkout_session_id FROM founding_checkout_holds WHERE checkout_session_id=?').bind(hold).first();
     return reply({error:existing?'Checkout already started; wait before retrying':'No spots available or already reserved'},409);
