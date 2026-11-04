@@ -65,6 +65,12 @@
 			@media (max-width: 480px) {
 				#container09 #buttons05 a.n01, #container09 #buttons01 a.n01 { width: 100% !important; min-height: 60px !important; }
 			}
+			/* Desktop-only Founding 100 navigation CTA; keep original navigation intact. */
+			#container02 #buttons03 { display:flex; align-items:center; flex-wrap:wrap; justify-content:flex-end; gap:8px; }
+			#container02 #buttons03 > li { margin:0 !important; }
+			#container02 #buttons03 .rb-founder-nav-item a { background:#f39800 !important; color:#fff !important; border-color:#f39800 !important; padding-left:12px !important; padding-right:12px !important; }
+			#container02 #buttons03 a { font-size:clamp(.65rem,.85vw,.8rem) !important; white-space:nowrap; }
+			@media(max-width:1100px) { #container02 #buttons03 { max-width:340px; } #container02 #buttons03 a { padding-top:9px !important; padding-bottom:9px !important; } }
 			/* White label on the creator/affiliate navigation CTA only. */
 			#buttons03 a.n01 { color: #ffffff !important; }
 			/* Match the affiliate application button label to the white navigation CTA. */
@@ -148,6 +154,8 @@
 										<ul id="buttons03" class="buttons-component instance-3">
 											<li>
 												<a href="#affiliate" class="n01" role="button">APPLY AS CREATOR / AFFILIATE</a>
+											</li><li class="rb-founder-nav-item">
+												<a href="#flip" class="n01" role="button">JOIN THE FOUNDING 100</a>
 											</li>
 										</ul>
 									</div>
@@ -1522,8 +1530,8 @@
 							<div class="wrapper">
 								<div class="inner">
 									<p id="text32" class="text-component instance-32"><mark>Creator &amp; Affiliate Program</mark></p>
-									<p id="text42" class="text-component instance-42"><span class="p">Become One of Our <mark>Founding 50 Creators</mark></span></p>
-									<p id="text25" class="text-component instance-25">Are you a thrifting, sneaker, vintage, or reselling content creator? Join our exclusive Founding 50 Creator Program. Get complimentary access to Reseller Bro and earn <mark>30% recurring commission</mark> on eligible paying subscribers you refer. Help your audience make smarter buying decisions in seconds — and earn as Reseller Bro grows.</p>
+									<p id="text42" class="text-component instance-42"><span class="p">Become One of Our <mark>Founding 10 Creators</mark></span></p>
+									<p id="text25" class="text-component instance-25">Are you a thrifting, sneaker, vintage, or reselling content creator? Join our exclusive Founding 10 Creator Program. Get complimentary access to Reseller Bro and earn <mark>30% lifetime recurring commission</mark> on eligible paying subscribers you refer, for as long as their subscriptions remain active. Help your audience make smarter buying decisions in seconds — and earn as Reseller Bro grows.</p>
 									<form enctype="multipart/form-data" id="form03" method="post" action="#" class="form-component instance-3">
 										<div class="inner">
 											<div class="field" data-type="text">
