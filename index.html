@@ -1426,7 +1426,7 @@
 									<div class="rb-founding-single" aria-label="Founding 100 membership options">
 										<p class="rb-founding-single-title">OPTION 1 — RESERVE A PAID FOUNDING SPOT</p>
 										<p><strong>One-time $7.99 reservation.</strong> Secure one of 100 founding spots and lock in the $7.99/month founding rate while subscribed. Your reservation payment is credited toward your first paid month. This is not a recurring charge today.</p>
-										<button type="button" disabled aria-disabled="true" class="rb-founding-pay-disabled" id="rb-founding-reserve-button">[ PAID RESERVATIONS OPENING SOON ]</button>
+										<button type="button" class="rb-founding-pay-disabled" id="rb-founding-reserve-button">[ RESERVE MY FOUNDING SPOT — $7.99 ]</button>
 										<div id="rb-founding-checkout-fields" hidden style="margin:1rem 0;text-align:left">
 											<label for="rb-founding-pay-name">Your name</label>
 											<input id="rb-founding-pay-name" type="text" maxlength="200" autocomplete="name" placeholder="Your name" style="width:100%;box-sizing:border-box;margin:.4rem 0 1rem;padding:.8rem" />
@@ -1442,14 +1442,13 @@
 											var fields = document.getElementById('rb-founding-checkout-fields');
 											var note = document.querySelector('.rb-founding-single-note');
 											if (!button || !fields) return;
-											// Keep the public checkout disabled until live checkout and protections are verified.
-											// Preview creates a real live Checkout session. Never enter card details while testing.
-											if (params.get('founding_preview') === '1') {
+											// Public checkout is enabled. Stripe charges $7.99 once; no subscription starts now.
+											if (params.get('stripe_test') !== '1') {
 												button.disabled = false;
 												button.removeAttribute('aria-disabled');
-												button.textContent = '[ OPEN STRIPE CHECKOUT — TEST ONLY ]';
+												button.textContent = '[ RESERVE MY FOUNDING SPOT — $7.99 ]';
 												fields.hidden = false;
-												if (note) note.textContent = 'PRIVATE LIVE CHECKOUT TEST — do not enter card details or complete payment.';
+												if (note) note.textContent = 'Secure one of 100 founding reservations with a one-time $7.99 payment. The free list below does not reserve a spot.';
 												button.addEventListener('click', async function () {
 													
 													var name = document.getElementById('rb-founding-pay-name').value.trim();
@@ -1479,7 +1478,7 @@
 											}
 										})();
 										</script>
-										<p class="rb-founding-single-note">Founding 100 payments are in final testing and are not open yet. The free email list below is separate and does not reserve a paid spot.</p>
+										<p class="rb-founding-single-note">Secure one of 100 founding reservations with a one-time $7.99 payment. The free email list below is separate and does not reserve a paid spot.</p>
 										<div class="rb-founding-divider"><span>OPTION 2 — JOIN THE FREE LIST</span></div>
 										<p><strong>No payment. No reservation.</strong> Leave your name and email to receive launch updates. This does not secure one of the 100 paid founding spots.</p>
 										<form enctype="multipart/form-data" id="form02" method="post" action="#" class="form-component instance-2">
