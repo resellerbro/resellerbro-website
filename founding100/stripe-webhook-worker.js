@@ -66,6 +66,28 @@ async function checkout(request,env){
     return reply({url:s.url});
   }catch(err){await releaseHold(env.FOUNDING_DB,hold);console.error('Checkout failed',String(err));return reply({error:'Checkout unavailable'},503);}
 }
+// Transactional email is isolated from checkout and runs only after a paid reservation is recorded.
+const emailEscape = value => String(value ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function notifyFounder(env,sessionId){
+  if(env.STRIPE_MODE!=='live'||!env.RESEND_API_KEY)return;
+  const row=await env.FOUNDING_DB.prepare("SELECT id,customer_name,customer_email FROM founding_reservations WHERE stripe_checkout_session_id=? AND status='paid' AND stripe_mode='live'").bind(sessionId).first();
+  if(!row)return;
+  const numberRow=await env.FOUNDING_DB.prepare("SELECT COUNT(*) AS n FROM founding_reservations WHERE status='paid' AND stripe_mode='live' AND id<=?").bind(row.id).first();
+  const founderNumber=Number(numberRow?.n||0);
+  if(founderNumber<1||founderNumber>100)throw Error('Invalid founder number for email');
+  const name=str(row.customer_name,200)||'Reseller Bro Founder';
+  const recipients=[
+    {kind:'welcome',to:row.customer_email,subject:'Welcome to the Reseller Bro Founding 100!',html:`<p>Hey ${emailEscape(name)},</p><p>Welcome to the <strong>Reseller Bro Founding 100!</strong> You're Founder #${founderNumber}.</p><p>Your $7.99 reservation was received and will be credited toward your first subscription month when we launch. Your founding $7.99/month rate stays in effect while your subscription remains active.</p><p>We'll email you when Reseller Bro is ready to launch. Thanks for joining the original crew!</p><p>— Reseller Bro</p>`},
+    {kind:'owner',to:'joe@resellerbro.com',subject:`New Reseller Bro Founder #${founderNumber}`,html:`<p>New paid Founding 100 reservation.</p><p>Founder #${founderNumber}<br>Name: ${emailEscape(name)}<br>Email: ${emailEscape(row.customer_email)}<br>Payment: $7.99</p>`}
+  ];
+  for(const message of recipients){
+    const sent=await env.FOUNDING_DB.prepare('SELECT 1 FROM founding_email_deliveries WHERE reservation_id=? AND email_kind=?').bind(row.id,message.kind).first();
+    if(sent)continue;
+    const response=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+env.RESEND_API_KEY,'Content-Type':'application/json','Idempotency-Key':`founding-${row.id}-${message.kind}-v1`},body:JSON.stringify({from:'Reseller Bro <notifications@resellerbro.com>',to:[message.to],subject:message.subject,html:message.html})});
+    if(!response.ok){console.error('Founder email failed',message.kind,response.status);throw Error('Founder email delivery failed');}
+    await env.FOUNDING_DB.prepare('INSERT OR IGNORE INTO founding_email_deliveries(reservation_id,email_kind) VALUES(?,?)').bind(row.id,message.kind).run();
+  }
+}
 async function webhook(request,env){
   const raw=await request.text();
   if(!(await validSignature(raw,request.headers.get('stripe-signature'),env.STRIPE_WEBHOOK_SECRET)))return reply({error:'Invalid signature'},400);
@@ -82,7 +104,7 @@ async function webhook(request,env){
   const hold=await env.FOUNDING_DB.prepare('SELECT checkout_session_id,referral_code FROM founding_checkout_holds WHERE checkout_session_id=?').bind(s.id).first();
   if(!hold){
     const recorded=await env.FOUNDING_DB.prepare('SELECT id FROM founding_reservations WHERE stripe_checkout_session_id=? AND status=? AND stripe_mode=?').bind(s.id,'paid',env.STRIPE_MODE).first();
-    if(recorded){await env.FOUNDING_DB.prepare('INSERT OR IGNORE INTO founding_webhook_events(stripe_event_id,event_type,stripe_mode) VALUES(?,?,?)').bind(event.id,event.type,env.STRIPE_MODE).run();return reply({received:true});}
+    if(recorded){await env.FOUNDING_DB.prepare('INSERT OR IGNORE INTO founding_webhook_events(stripe_event_id,event_type,stripe_mode) VALUES(?,?,?)').bind(event.id,event.type,env.STRIPE_MODE).run();try{await notifyFounder(env,s.id);}catch(err){console.error('Email retry needed',String(err));return reply({error:'Email retry needed'},500);}return reply({received:true});}
     console.error('Unrecognized or expired hold for paid checkout',s.id);return reply({error:'Payment requires manual reconciliation'},500);
   }
   try{
@@ -93,6 +115,7 @@ async function webhook(request,env){
       env.FOUNDING_DB.prepare('INSERT OR IGNORE INTO founding_webhook_events(stripe_event_id,event_type,stripe_mode) VALUES(?,?,?)').bind(event.id,event.type,env.STRIPE_MODE)
     ]);
   }catch(err){console.error('Payment not recorded; requires reconciliation',s.id,String(err));return reply({error:'Unable to record payment'},500);}
+  try{await notifyFounder(env,s.id);}catch(err){console.error('Email retry needed',String(err));return reply({error:'Email retry needed'},500);}
   return reply({received:true});
 }
 // A Stripe session ID is a bearer credential. Return only minimal confirmation data.
