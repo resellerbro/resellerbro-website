@@ -65,12 +65,8 @@
 			@media (max-width: 480px) {
 				#container09 #buttons05 a.n01, #container09 #buttons01 a.n01 { width: 100% !important; min-height: 60px !important; }
 			}
-			/* Desktop-only Founding 100 navigation CTA; keep original navigation intact. */
-			#container02 #buttons03 { display:flex; align-items:center; flex-wrap:wrap; justify-content:flex-end; gap:8px; }
-			#container02 #buttons03 > li { margin:0 !important; }
-			#container02 #buttons03 .rb-founder-nav-item a { background:#f39800 !important; color:#fff !important; border-color:#f39800 !important; padding-left:12px !important; padding-right:12px !important; }
-			#container02 #buttons03 a { font-size:clamp(.65rem,.85vw,.8rem) !important; white-space:nowrap; }
-			@media(max-width:1100px) { #container02 #buttons03 { max-width:340px; } #container02 #buttons03 a { padding-top:9px !important; padding-bottom:9px !important; } }
+			/* Founding 100 link sits with existing header navigation to avoid button crowding. */
+			#container02 #links01 .rb-founder-nav-link a { color:#ff9900 !important; font-weight:700 !important; }
 			/* White label on the creator/affiliate navigation CTA only. */
 			#buttons03 a.n01 { color: #ffffff !important; }
 			/* Match the affiliate application button label to the white navigation CTA. */
@@ -147,6 +143,8 @@
 												<a href="#perks">Perks</a>
 											</li><li class="n03">
 												<a href="#story">Story</a>
+											</li><li class="rb-founder-nav-link">
+												<a href="#flip">JOIN THE FOUNDING 100</a>
 											</li>
 										</ul>
 									</div>
@@ -154,8 +152,7 @@
 										<ul id="buttons03" class="buttons-component instance-3">
 											<li>
 												<a href="#affiliate" class="n01" role="button">APPLY AS CREATOR / AFFILIATE</a>
-											</li><li class="rb-founder-nav-item">
-												<a href="#flip" class="n01" role="button">JOIN THE FOUNDING 100</a>
+											
 											</li>
 										</ul>
 									</div>
