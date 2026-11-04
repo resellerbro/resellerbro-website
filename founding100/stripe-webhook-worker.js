@@ -13,7 +13,7 @@ async function validSignature(body,header,secret){
   if(!header || !secret)return false;
   const t=header.split(',').find(p=>p.trim().startsWith('t='))?.trim().slice(2);
   const signatures=header.split(',').filter(p=>p.trim().startsWith('v1=')).map(p=>p.trim().slice(3));
-  if(!/^\\d+$/.test(t||'') || Math.abs(Date.now()/1000-Number(t))>300 || !signatures.length)return false;
+  if(!/^\d+$/.test(t||'') || Math.abs(Date.now()/1000-Number(t))>300 || !signatures.length)return false;
   const key=await crypto.subtle.importKey('raw',enc.encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);
   const expected=bytesHex(await crypto.subtle.sign('HMAC',key,enc.encode(t+'.'+body)));
   return signatures.some(s=>s.length===expected.length && [...s].reduce((v,c,i)=>v|(c.charCodeAt(0)^expected.charCodeAt(i)),0)===0);
@@ -29,7 +29,7 @@ async function checkout(request,env){
   if(request.headers.get('origin')!==env.SITE_ORIGIN)return reply({error:'Invalid origin'},403);
   let payload;try{payload=await request.json();}catch{return reply({error:'Invalid JSON'},400);}
   const email=str(payload.email,254).toLowerCase(),name=str(payload.name,200),referral=str(payload.referral_code,64).toUpperCase();
-  if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))return reply({error:'Valid email required'},400);
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return reply({error:'Valid email required'},400);
   // Idempotency key is client-supplied UUID; one hold per request. Limit request size and add Turnstile/rate limiting before production.
   const token=str(payload.request_id,64);
   if(!/^[0-9a-f-]{36}$/i.test(token))return reply({error:'Invalid request ID'},400);
