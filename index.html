@@ -1426,22 +1426,55 @@
 										<p class="rb-founding-single-title">SECURE YOUR FOUNDING SPOT</p>
 										<p>Reserve a founding membership for $7.99, credited toward your first month when paid access launches.</p>
 										<button type="button" disabled aria-disabled="true" class="rb-founding-pay-disabled" id="rb-founding-reserve-button">[ SECURE MY SPOT — $7.99 ]</button>
+										<div id="rb-founding-checkout-fields" hidden style="margin:1rem 0;text-align:left">
+											<label for="rb-founding-pay-name">Your name</label>
+											<input id="rb-founding-pay-name" type="text" maxlength="200" autocomplete="name" placeholder="Your name" style="width:100%;box-sizing:border-box;margin:.4rem 0 1rem;padding:.8rem" />
+											<label for="rb-founding-pay-email">Your email</label>
+											<input id="rb-founding-pay-email" type="email" maxlength="254" autocomplete="email" placeholder="you@example.com" style="width:100%;box-sizing:border-box;margin:.4rem 0 1rem;padding:.8rem" />
+											<label style="display:block;font-size:.9rem;line-height:1.5"><input id="rb-founding-pay-consent" type="checkbox" /> I understand this is a one-time $7.99 reservation, credited toward my first paid month. The product may launch with bugs. A canceled paid launch will result in a refund; refunds required by law are honored.</label>
+											<p id="rb-founding-pay-status" role="status" aria-live="polite"></p>
+										</div>
 										<script>
 										(function () {
-											// Sandbox checkout is available only when explicitly requested by the site tester.
-											// Do not enable production payments without a verified reservation backend.
 											var params = new URLSearchParams(window.location.search);
-											if (params.get('stripe_test') !== '1') return;
 											var button = document.getElementById('rb-founding-reserve-button');
-											if (!button) return;
-											button.disabled = false;
-											button.removeAttribute('aria-disabled');
-											button.textContent = '[ TEST $7.99 CHECKOUT — NO REAL CHARGE ]';
-											button.addEventListener('click', function () {
-												window.location.assign('https://buy.stripe.com/test_4gM6oH8GfaUegHV95zcV200');
-											});
-											var note = button.nextElementSibling;
-											if (note) note.textContent = 'SANDBOX TEST ONLY — no real charge or founding membership reservation.';
+											var fields = document.getElementById('rb-founding-checkout-fields');
+											var note = document.querySelector('.rb-founding-single-note');
+											if (!button || !fields) return;
+											// Keep the public checkout disabled until live checkout and protections are verified.
+											// Preview creates a real live Checkout session. Never enter card details while testing.
+											if (params.get('founding_preview') === '1') {
+												button.disabled = false;
+												button.removeAttribute('aria-disabled');
+												button.textContent = '[ PREVIEW LIVE CHECKOUT — DO NOT PAY ]';
+												if (note) note.textContent = 'PRIVATE CHECKOUT PREVIEW — this opens LIVE Stripe Checkout. Do not complete a payment.';
+												button.addEventListener('click', async function () {
+													if (fields.hidden) { fields.hidden = false; button.textContent = '[ CONTINUE TO STRIPE — DO NOT PAY ]'; return; }
+													var name = document.getElementById('rb-founding-pay-name').value.trim();
+													var email = document.getElementById('rb-founding-pay-email').value.trim();
+													var consent = document.getElementById('rb-founding-pay-consent').checked;
+													var status = document.getElementById('rb-founding-pay-status');
+													if (!name || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email) || !consent) { status.textContent = 'Enter your name, valid email, and accept the terms.'; return; }
+													if (!window.crypto || !crypto.randomUUID) { status.textContent = 'Please use an up-to-date browser.'; return; }
+													button.disabled = true;
+													status.textContent = 'Opening secure Stripe Checkout...';
+													try {
+														var response = await fetch('https://dark-shape-f2a6.gisttttt.workers.dev/founding/checkout', {method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name:name,email:email,request_id:crypto.randomUUID()})});
+														var data = await response.json();
+														if (!response.ok || !data.url) throw new Error(data.error || 'Checkout unavailable');
+														var url = new URL(data.url);
+														if (url.protocol !== 'https:' || !(url.hostname === 'checkout.stripe.com' || url.hostname.endsWith('.checkout.stripe.com'))) throw new Error('Unexpected checkout destination');
+														window.location.assign(data.url);
+													} catch (error) { status.textContent = error.message || 'Checkout unavailable'; button.disabled = false; }
+												});
+											} else if (params.get('stripe_test') === '1') {
+												// Preserve the existing sandbox-only checkout shortcut.
+												button.disabled = false;
+												button.removeAttribute('aria-disabled');
+												button.textContent = '[ TEST $7.99 CHECKOUT — NO REAL CHARGE ]';
+												button.addEventListener('click', function () { window.location.assign('https://buy.stripe.com/test_4gM6oH8GfaUegHV95zcV200'); });
+												if (note) note.textContent = 'SANDBOX TEST ONLY — no real charge or founding membership reservation.';
+											}
 										})();
 										</script>
 										<p class="rb-founding-single-note">Payment option coming soon. No charge today. Reservation and refund terms will be provided before checkout opens.</p>
