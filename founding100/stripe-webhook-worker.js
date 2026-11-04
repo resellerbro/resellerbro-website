@@ -95,6 +95,23 @@ async function webhook(request,env){
   }catch(err){console.error('Payment not recorded; requires reconciliation',s.id,String(err));return reply({error:'Unable to record payment'},500);}
   return reply({received:true});
 }
+// A Stripe session ID is a bearer credential. Return only minimal confirmation data.
+async function confirmation(request,env){
+  const url=new URL(request.url);
+  const sessionId=url.searchParams.get('session_id')||'';
+  if(!/^cs_(test_|live_)[A-Za-z0-9]{10,}$/.test(sessionId))return reply({error:'Invalid checkout reference'},400);
+  const row=await env.FOUNDING_DB.prepare("SELECT id,customer_name,amount_paid_cents,first_month_credit_cents FROM founding_reservations WHERE stripe_checkout_session_id=? AND status='paid' AND stripe_mode=?").bind(sessionId,env.STRIPE_MODE).first();
+  if(!row)return reply({confirmed:false,pending:true});
+  // Confirm directly with Stripe as well as our webhook-recorded database row.
+  const response=await fetch('https://api.stripe.com/v1/checkout/sessions/'+encodeURIComponent(sessionId),{headers:{Authorization:'Bearer '+env.STRIPE_SECRET_KEY}});
+  if(!response.ok)return reply({error:'Payment verification unavailable'},503);
+  const session=await response.json();
+  if(session.payment_status!=='paid'||session.amount_total!==799||session.currency!=='usd'||session.mode!=='payment'||session.metadata?.resellerbro_reservation!=='founding100')return reply({confirmed:false,pending:true});
+  const count=await env.FOUNDING_DB.prepare("SELECT COUNT(*) AS n FROM founding_reservations WHERE status='paid' AND stripe_mode=? AND id<=?").bind(env.STRIPE_MODE,row.id).first();
+  const number=Number(count?.n||0);
+  return reply({confirmed:true,member_number:number>=1&&number<=100?number:null,name:str(row.customer_name,200),amount_paid_cents:Number(row.amount_paid_cents),first_month_credit_cents:Number(row.first_month_credit_cents)});
+}
+
 export default {async fetch(request,env){
   const path=new URL(request.url).pathname;
   if(request.method==='OPTIONS' && path==='/founding/checkout') {
@@ -105,6 +122,7 @@ export default {async fetch(request,env){
   if(path==='/founding/test'&&request.method==='GET'&&env.STRIPE_MODE==='test')return new Response("<!doctype html><html lang=\"en\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Founding 100 — Sandbox Test</title><style>body{background:#101014;color:#f5f5f5;font:16px system-ui;margin:0;padding:40px 18px}main{max-width:430px;margin:auto}h1{color:#ff9b25}label{display:block;margin:20px 0 6px}input{box-sizing:border-box;width:100%;padding:13px;border:1px solid #777;border-radius:8px;background:#222;color:white}button{background:#ff9b25;border:0;border-radius:8px;padding:15px;width:100%;margin-top:24px;font-weight:700;cursor:pointer}small{color:#bcbcbc}#status{min-height:28px;color:#ffd08b}</style><main><h1>Founding 100</h1><p><strong>STRIPE SANDBOX — NO REAL MONEY</strong></p><p>Test the $7.99 reservation checkout. This page is separate from the live website.</p><form id=\"form\"><label for=\"name\">Test name</label><input id=\"name\" autocomplete=\"name\" required maxlength=\"200\" value=\"Founding Test\"><label for=\"email\">Test email</label><input id=\"email\" type=\"email\" autocomplete=\"email\" required maxlength=\"254\" placeholder=\"test@example.com\"><button id=\"go\" type=\"submit\">Open $7.99 test checkout</button></form><p id=\"status\" role=\"status\"></p><small>Use Stripe test card 4242 4242 4242 4242, any future expiration, and any CVC. Do not use a real card.</small></main><script>document.getElementById('form').addEventListener('submit',async e=>{e.preventDefault();const b=document.getElementById('go'),s=document.getElementById('status');b.disabled=true;s.textContent='Creating secure Stripe test checkout...';try{const r=await fetch('/founding/checkout',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name:document.getElementById('name').value,email:document.getElementById('email').value,request_id:crypto.randomUUID()})});const d=await r.json();if(!r.ok||!d.url)throw Error(d.error||'Checkout unavailable');const u=new URL(d.url);if(u.protocol!=='https:'||!u.hostname.endsWith('.stripe.com'))throw Error('Unexpected checkout destination');location.assign(d.url)}catch(err){s.textContent=err.message;b.disabled=false}})</script></html>",{headers:{'content-type':'text/html; charset=utf-8','cache-control':'no-store','x-robots-tag':'noindex, nofollow','content-security-policy':"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'"}});
   if(path==='/stripe/webhook'&&request.method==='POST')return webhook(request,env);
   if(path==='/founding/checkout'&&request.method==='POST')return checkout(request,env);
+  if(path==='/founding/confirmation'&&request.method==='GET')return confirmation(request,env);
   if(path==='/founding/availability'&&request.method==='GET'){
     const row=await env.FOUNDING_DB.prepare("SELECT (SELECT COUNT(*) FROM founding_reservations WHERE status='paid' AND stripe_mode=?) paid, (SELECT COUNT(*) FROM founding_checkout_holds WHERE expires_at > datetime('now')) held").bind(env.STRIPE_MODE).first();
     return reply({available:Math.max(0,100-Number(row.paid||0)-Number(row.held||0))});
