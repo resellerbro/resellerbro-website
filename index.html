@@ -73,23 +73,18 @@
 			#container17 > .wrapper > .inner { padding-top: 1.25rem !important; padding-bottom: 1.25rem !important; }
 			#container04 > .wrapper > .inner { padding-top: 2.5rem !important; }
 			
-			/* Founding 100 options: scoped styling; preserve existing form behavior. */
-			.rb-founding-choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; width: 100%; margin: 1.5rem auto; text-align: center; }
-			.rb-founding-choice { border: 1px solid rgba(255,153,0,.55); border-radius: 12px; padding: 1.25rem; background: #141414; color: #eee; font-family: 'Inter', sans-serif; }
-			.rb-founding-choices { align-items: stretch; }
-			.rb-founding-choice:not(.rb-founding-choice-free) { display: flex; flex-direction: column; justify-content: center; align-items: stretch; }
-			.rb-founding-choice:not(.rb-founding-choice-free) > * { flex-shrink: 0; }
-			@media (max-width: 700px) { .rb-founding-choice:not(.rb-founding-choice-free) { min-height: 16rem; } }
-			.rb-founding-choice-title { font-weight: 700; color: #ff9900; margin-bottom: .75rem; }
-			.rb-founding-choice p { line-height: 1.55; font-size: 1rem; margin-top: .6rem; margin-bottom: .6rem; }
-			.rb-founding-choice .rb-founding-choice-note { font-size: .9rem; color: #bcbcbc; }
-			.rb-founding-pay-disabled { display: block; width: 100%; margin: 1rem auto; padding: .85rem .65rem; border: 0; border-radius: 6px; background: #ff9900; color: #fff; font-weight: 700; cursor: not-allowed; opacity: 1; }
-			
-			.rb-founding-choice-free #form02 { width: 100%; max-width: 100%; margin: 1rem auto 0; }
-			.rb-founding-choice-free #form02 > .inner { width: 100%; }
-			.rb-founding-choice-free #form02 .field, .rb-founding-choice-free #form02 .actions { width: 100%; }
-			.rb-founding-choice-free #form02 .actions button { width: 100%; }
-			@media (max-width: 700px) { .rb-founding-choices { grid-template-columns: 1fr; } }
+			/* Founding 100: one centered card; preserve original signup form and Turnstile. */
+			.rb-founding-single { box-sizing: border-box; width: min(100%, 700px); margin: 1.5rem auto; padding: clamp(1.25rem, 3vw, 2rem); border: 1px solid rgba(255,153,0,.7); border-radius: 12px; background: #141414; color: #eee; text-align: center; font-family: 'Inter', sans-serif; }
+			.rb-founding-single > p { margin: .75rem auto; line-height: 1.55; }
+			.rb-founding-single .rb-founding-single-title { font-weight: 700; color: #ff9900; }
+			.rb-founding-single .rb-founding-single-note { font-size: .85rem; color: #bcbcbc; }
+			.rb-founding-pay-disabled { display: block; width: 100%; padding: .85rem .65rem; margin: 1.1rem auto; border: 0; border-radius: 6px; background: #ff9900; color: #fff; font-weight: 700; opacity: 1; cursor: not-allowed; }
+			.rb-founding-divider { display: flex; align-items: center; gap: 1rem; margin: 1.8rem 0 1rem; color: #ddd; font-weight: 700; }
+			.rb-founding-divider:before, .rb-founding-divider:after { content: ''; height: 1px; flex: 1; background: #555; }
+			.rb-founding-single #form02 { width: 100%; max-width: 100%; margin: 1.25rem auto; }
+			.rb-founding-single #form02 > .inner { width: 100%; }
+			.rb-founding-single #form02 .field, .rb-founding-single #form02 .actions { width: 100%; }
+			.rb-founding-single #form02 .actions button { width: 100%; }
 			/* All orange CTA links and submit buttons use white labels; preserve loading states. */
 			.buttons-component > li > a,
 			.form-component .actions button:not(.waiting) { color: #ffffff !important; }
@@ -1427,18 +1422,14 @@
 									<p id="text44" class="text-component instance-44"><mark>FOUNDING RATE RESERVED FOR FIRST 100 PAID MEMBERS</mark></p>
 									<p id="text22" class="text-component instance-22">Join <mark>THE FOUNDING 100</mark></p>
 									<p id="text08" class="text-component instance-8"><strong>$7.99/month — your founding rate while subscribed.</strong> Limited to the first 100 confirmed paid founding memberships. Free beta comes first. Choose how you would like to join below.</p>
-									<div class="rb-founding-choices" aria-label="Founding 100 membership options">
-										<div class="rb-founding-choice">
-											<p class="rb-founding-choice-title">SECURE YOUR FOUNDING SPOT</p>
-											<p>Reserve a founding membership for $7.99, credited toward your first month when paid access launches.</p>
-											<button type="button" disabled aria-disabled="true" class="rb-founding-pay-disabled">[ SECURE MY SPOT — $7.99 ]</button>
-											<p class="rb-founding-choice-note">Payment option coming soon. No charge today. Reservation and refund terms will be provided before checkout opens.</p>
-										</div>
-										<div class="rb-founding-choice rb-founding-choice-free">
-											<p class="rb-founding-choice-title">JOIN THE FREE FOUNDING LIST</p>
-											<p>Interested but not ready to pay? Sign up below to hear when founding memberships become available.</p>
-											<p class="rb-founding-choice-note">Free to join. No payment required. Joining the list does not guarantee one of the 100 spots.</p>
-									<form enctype="multipart/form-data" id="form02" method="post" action="#" class="form-component instance-2">
+									<div class="rb-founding-single" aria-label="Founding 100 membership options">
+										<p class="rb-founding-single-title">SECURE YOUR FOUNDING SPOT</p>
+										<p>Reserve a founding membership for $7.99, credited toward your first month when paid access launches.</p>
+										<button type="button" disabled aria-disabled="true" class="rb-founding-pay-disabled">[ SECURE MY SPOT — $7.99 ]</button>
+										<p class="rb-founding-single-note">Payment option coming soon. No charge today. Reservation and refund terms will be provided before checkout opens.</p>
+										<div class="rb-founding-divider"><span>OR JOIN THE FREE LIST</span></div>
+										<p>Not ready to pay? Join our free interest list for launch updates and the chance to become one of the Founding 100.</p>
+										<form enctype="multipart/form-data" id="form02" method="post" action="#" class="form-component instance-2">
 										<div class="inner">
 											<div class="field" data-type="text">
 												<input type="text" name="name" id="form02-name" placeholder="Your Name" maxlength="256" required />
@@ -1459,9 +1450,8 @@
 										</div>
 										<input type="hidden" name="id" value="form02" />
 									</form>
-										</div>
+										<p class="rb-founding-single-note">No payment required. Joining the free list does not guarantee one of the 100 founding memberships.</p>
 									</div>
-
 									<p id="text39" class="text-component instance-39">Free interest list • No payment today • Founding rate applies only after a confirmed paid subscription and lasts while that subscription remains active.</p>
 								</div>
 							</div>
