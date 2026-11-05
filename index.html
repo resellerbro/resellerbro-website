@@ -950,107 +950,47 @@
   .rb-phones-container { justify-content: flex-start; overflow-x: auto; gap: 18px; padding: 10px 12px 24px; scroll-snap-type: x mandatory; }
   .rb-logic-iphone { zoom: .68; scroll-snap-align: start; }
 }
+/* Real Reseller Bro app screenshots: keep original pixels inside the existing phone hardware. */
+.rb-logic-iphone .rb-logic-iphone-screen.rb-real-app-screen {padding:0; background:#000; border-radius:39px; overflow:hidden; position:relative;}
+.rb-real-app-screen img {display:block; width:100%; height:100%; object-fit:cover; object-position:center top; border-radius:39px;}
+.rb-logic-iphone.inventory .rb-logic-iphone-frame {box-shadow:0 0 0 3px #e9a94c,0 16px 34px rgba(0,0,0,.40),0 0 34px rgba(233,169,76,.20);}
+.rb-logic-iphone.potential .rb-logic-iphone-frame {box-shadow:0 0 0 3px #f5c542,0 16px 34px rgba(0,0,0,.40),0 0 34px rgba(245,197,66,.22);}
+.rb-logic-iphone-frame {isolation:isolate;}
 </style>
 										</head>
 										<body>
 										
 										<!-- Reseller Bro Phones Container Component -->
 										<div class="rb-phones-container">
-										<!-- SKIP Phone -->
-										<div class="rb-logic-iphone skip">
-										<div class="rb-logic-iphone-frame">
-										<div class="rb-logic-iphone-btn-left"></div>
-										<div class="rb-logic-iphone-btn-left2"></div>
-										<div class="rb-logic-iphone-btn-left3"></div>
-										<div class="rb-logic-iphone-btn-right"></div>
-										<div class="rb-logic-iphone-screen">
-										<div class="rb-logic-iphone-notch"></div>
-										<div class="rb-logic-header">
-										<span class="rb-logic-back"><i class="fas fa-chevron-left"></i></span>
-										<div class="rb-logic-logo">🏷️</div>
-										<span class="rb-logic-brand">Reseller <span>Bro</span></span>
-										</div>
-										<div class="rb-logic-img">
-										<img src="https://i.ibb.co/67yPwXmr/skip.png" alt="Skip Item">
-										</div>
-										<div class="rb-logic-result">SKIP!</div>
-										<div class="rb-logic-item">
-										<img src="https://i.ibb.co/67yPwXmr/skip.png" alt="Skip Item">
-										</div>
-										<div class="rb-logic-price">No Profit</div>
-										<div class="rb-logic-label">No Profit</div>
-										<div class="rb-logic-actions">
-										<div class="rb-logic-btn dark">SKIP</div>
-										<div class="rb-logic-btn outline">Save Anyway</div>
-										<div class="rb-logic-btn market">MERCARI</div>
-										<div class="rb-logic-btn market">Etsy</div>
-										<div class="rb-logic-btn market">POSHMARK</div>
-										<div class="rb-logic-btn market">ebay</div>
-										</div>
-										<div class="rb-logic-store-count">0/4</div>
-										</div>
-										</div>
-										</div>
-										
-										
-<!-- POTENTIAL FLIP temporary preview -->
+										<!-- SKIP Phone: real Reseller Bro screenshot -->
+<div class="rb-logic-iphone skip">
+ <div class="rb-logic-iphone-frame">
+  <div class="rb-logic-iphone-btn-left"></div><div class="rb-logic-iphone-btn-left2"></div><div class="rb-logic-iphone-btn-left3"></div><div class="rb-logic-iphone-btn-right"></div>
+  <div class="rb-logic-iphone-screen rb-real-app-screen"><img src="assets/images/resellerbro-skip-screen.webp" alt="Reseller Bro SKIP result for a Kodak digital camera" loading="lazy" decoding="async"></div>
+ </div>
+</div>
+<!-- POTENTIAL Phone: real Reseller Bro screenshot -->
 <div class="rb-logic-iphone potential">
- <div class="rb-logic-iphone-frame"><div class="rb-logic-iphone-screen">
- <div class="rb-logic-iphone-notch"></div>
- <div class="rb-logic-header"><span class="rb-logic-logo">🏷️</span><span class="rb-logic-brand">Reseller <span>Bro</span></span></div>
- <div class="rb-logic-result">POTENTIAL FLIP</div>
- <div class="rb-logic-preview"><strong>Opportunity worth checking</strong>More details or verified sales may be needed.</div>
- <div class="rb-logic-preview-note">Real app screenshot coming soon</div>
- </div></div>
+ <div class="rb-logic-iphone-frame">
+  <div class="rb-logic-iphone-btn-left"></div><div class="rb-logic-iphone-btn-left2"></div><div class="rb-logic-iphone-btn-left3"></div><div class="rb-logic-iphone-btn-right"></div>
+  <div class="rb-logic-iphone-screen rb-real-app-screen"><img src="assets/images/resellerbro-potential-screen.webp" alt="Reseller Bro Potential Flip result showing active listings" loading="lazy" decoding="async"></div>
+ </div>
 </div>
-<!-- FLIP Phone -->
-										<div class="rb-logic-iphone flip">
-										<div class="rb-logic-iphone-frame">
-										<div class="rb-logic-iphone-btn-left"></div>
-										<div class="rb-logic-iphone-btn-left2"></div>
-										<div class="rb-logic-iphone-btn-left3"></div>
-										<div class="rb-logic-iphone-btn-right"></div>
-										<div class="rb-logic-iphone-screen">
-										<div class="rb-logic-iphone-notch"></div>
-										<div class="rb-logic-header">
-										<span class="rb-logic-back"><i class="fas fa-chevron-left"></i></span>
-										<div class="rb-logic-logo">🏷️</div>
-										<span class="rb-logic-brand">Reseller <span>Bro</span></span>
-										</div>
-										<div class="rb-logic-img">
-										<img src="https://i.ibb.co/5X9sSKrH/flip.png" alt="Flip Item">
-										</div>
-										<div class="rb-logic-result">FLIP!</div>
-										<div class="rb-logic-item">
-										<img src="https://i.ibb.co/5X9sSKrH/flip.png" alt="Flip Item">
-										</div>
-										<div class="rb-logic-price">$35 - $65</div>
-										<div class="rb-logic-label">Estimated Profit</div>
-										<div class="rb-logic-actions">
-										<div class="rb-logic-btn dark">SKIP</div>
-										<div class="rb-logic-btn green">FLIP</div>
-										<div class="rb-logic-btn market">MERCARI</div>
-										<div class="rb-logic-btn market">Etsy</div>
-										<div class="rb-logic-btn market">POSHMARK</div>
-										<div class="rb-logic-btn market">ebay</div>
-										</div>
-										<div class="rb-logic-store-count">4/4</div>
-										</div>
-										</div>
-										</div>
-										
-										<!-- INVENTORY temporary preview -->
+<!-- FLIP Phone: real Reseller Bro screenshot -->
+<div class="rb-logic-iphone flip">
+ <div class="rb-logic-iphone-frame">
+  <div class="rb-logic-iphone-btn-left"></div><div class="rb-logic-iphone-btn-left2"></div><div class="rb-logic-iphone-btn-left3"></div><div class="rb-logic-iphone-btn-right"></div>
+  <div class="rb-logic-iphone-screen rb-real-app-screen"><img src="assets/images/resellerbro-flip-screen.webp" alt="Reseller Bro FLIP result for Gucci slide sandals" loading="lazy" decoding="async"></div>
+ </div>
+</div>
+<!-- INVENTORY Phone: real Reseller Bro screenshot -->
 <div class="rb-logic-iphone inventory">
- <div class="rb-logic-iphone-frame"><div class="rb-logic-iphone-screen">
- <div class="rb-logic-iphone-notch"></div>
- <div class="rb-logic-header"><span class="rb-logic-logo">🏷️</span><span class="rb-logic-brand">Reseller <span>Bro</span></span></div>
- <div class="rb-logic-result">INVENTORY</div>
- <div class="rb-logic-preview"><strong>Save your finds</strong>Keep your scanned items organized in one place.</div>
- <div class="rb-logic-preview-note">Real app screenshot coming soon</div>
- </div></div>
+ <div class="rb-logic-iphone-frame">
+  <div class="rb-logic-iphone-btn-left"></div><div class="rb-logic-iphone-btn-left2"></div><div class="rb-logic-iphone-btn-left3"></div><div class="rb-logic-iphone-btn-right"></div>
+  <div class="rb-logic-iphone-screen rb-real-app-screen"><img src="assets/images/resellerbro-inventory-screen.webp" alt="Reseller Bro saved items inventory with flip potential and skip results" loading="lazy" decoding="async"></div>
+ </div>
 </div>
-
-										</div><!-- end four-phone row -->
+</div><!-- end four-phone row -->
 </body>
 										</html><!-- mnbnbxmbzxmncbzxc -->
 									</div>
