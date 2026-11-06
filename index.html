@@ -956,6 +956,20 @@
 .rb-logic-iphone.inventory .rb-logic-iphone-frame {box-shadow:0 0 0 3px #2563eb,0 16px 34px rgba(0,0,0,.40),0 0 34px rgba(37,99,235,.25);}
 .rb-logic-iphone.potential .rb-logic-iphone-frame {box-shadow:0 0 0 3px #f5c542,0 16px 34px rgba(0,0,0,.40),0 0 34px rgba(245,197,66,.22);}
 .rb-logic-iphone-frame {isolation:isolate;}
+/* Demo infrastructure: buttons appear only after their matching MP4 is uploaded. */
+.rb-demo-action{margin:15px auto 0;padding:11px 18px;display:flex;align-items:center;justify-content:center;gap:9px;min-width:166px;border:1px solid rgba(255,255,255,.35);border-radius:999px;background:#171717;color:white;font:700 14px/1.2 Arial,sans-serif;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.rb-demo-action:hover,.rb-demo-action:focus-visible{background:#272727;outline:2px solid currentColor;outline-offset:2px}
+.rb-logic-iphone.skip .rb-demo-action{color:#ff6767}
+.rb-logic-iphone.potential .rb-demo-action{color:#ffd34a}
+.rb-logic-iphone.flip .rb-demo-action{color:#41d781}
+.rb-logic-iphone.inventory .rb-demo-action{color:#7ea8ff}
+.rb-demo-action[hidden]{display:none}
+.rb-demo-modal[hidden]{display:none}
+.rb-demo-modal{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.9)}
+.rb-demo-dialog{width:min(100%,400px);position:relative;display:flex;flex-direction:column;align-items:center;gap:12px}
+.rb-demo-dialog video{display:block;width:auto;max-width:100%;max-height:78dvh;aspect-ratio:512/1106;background:#000;border-radius:20px}
+.rb-demo-close{align-self:flex-end;color:white;background:#252525;border:1px solid #777;border-radius:999px;padding:10px 16px;font:700 14px Arial,sans-serif;cursor:pointer}
+
 </style>
 										</head>
 										<body>
@@ -963,34 +977,62 @@
 										<!-- Reseller Bro Phones Container Component -->
 										<div class="rb-phones-container">
 										<!-- SKIP Phone: real Reseller Bro screenshot -->
-<div class="rb-logic-iphone skip">
+<div class="rb-logic-iphone skip" data-demo-src="assets/videos/resellerbro-skip-demo.mp4" data-demo-label="SKIP">
  <div class="rb-logic-iphone-frame">
   <div class="rb-logic-iphone-btn-left"></div><div class="rb-logic-iphone-btn-left2"></div><div class="rb-logic-iphone-btn-left3"></div><div class="rb-logic-iphone-btn-right"></div>
   <div class="rb-logic-iphone-screen rb-real-app-screen"><img src="assets/images/resellerbro-skip-screen.webp" alt="Reseller Bro SKIP result for a Kodak digital camera" loading="lazy" decoding="async"></div>
  </div>
 </div>
 <!-- POTENTIAL Phone: real Reseller Bro screenshot -->
-<div class="rb-logic-iphone potential">
+<div class="rb-logic-iphone potential" data-demo-src="assets/videos/resellerbro-potential-demo.mp4" data-demo-label="Potential Flip">
  <div class="rb-logic-iphone-frame">
   <div class="rb-logic-iphone-btn-left"></div><div class="rb-logic-iphone-btn-left2"></div><div class="rb-logic-iphone-btn-left3"></div><div class="rb-logic-iphone-btn-right"></div>
   <div class="rb-logic-iphone-screen rb-real-app-screen"><img src="assets/images/resellerbro-potential-screen.webp" alt="Reseller Bro Potential Flip result showing active listings" loading="lazy" decoding="async"></div>
  </div>
 </div>
 <!-- FLIP Phone: real Reseller Bro screenshot -->
-<div class="rb-logic-iphone flip">
+<div class="rb-logic-iphone flip" data-demo-src="assets/videos/resellerbro-flip-demo.mp4" data-demo-label="FLIP">
  <div class="rb-logic-iphone-frame">
   <div class="rb-logic-iphone-btn-left"></div><div class="rb-logic-iphone-btn-left2"></div><div class="rb-logic-iphone-btn-left3"></div><div class="rb-logic-iphone-btn-right"></div>
   <div class="rb-logic-iphone-screen rb-real-app-screen"><img src="assets/images/resellerbro-flip-screen.webp" alt="Reseller Bro FLIP result for Gucci slide sandals" loading="lazy" decoding="async"></div>
  </div>
 </div>
 <!-- INVENTORY Phone: real Reseller Bro screenshot -->
-<div class="rb-logic-iphone inventory">
+<div class="rb-logic-iphone inventory" data-demo-src="assets/videos/resellerbro-inventory-demo.mp4" data-demo-label="Inventory">
  <div class="rb-logic-iphone-frame">
   <div class="rb-logic-iphone-btn-left"></div><div class="rb-logic-iphone-btn-left2"></div><div class="rb-logic-iphone-btn-left3"></div><div class="rb-logic-iphone-btn-right"></div>
   <div class="rb-logic-iphone-screen rb-real-app-screen"><img src="assets/images/resellerbro-inventory-screen.webp" alt="Reseller Bro saved items inventory with flip potential and skip results" loading="lazy" decoding="async"></div>
  </div>
 </div>
 </div><!-- end four-phone row -->
+<!-- Demo dialog is reserved for actual uploaded MP4s; missing demos never show dead buttons. -->
+<div class="rb-demo-modal" id="rb-demo-modal" hidden role="presentation">
+  <div class="rb-demo-dialog" role="dialog" aria-modal="true" aria-label="Reseller Bro feature demonstration">
+    <button class="rb-demo-close" type="button" id="rb-demo-close" aria-label="Close demonstration">✕ Close video</button>
+    <video id="rb-demo-video" controls playsinline preload="none" aria-label="Feature demonstration"></video>
+  </div>
+</div>
+<script>
+(function(){
+  var modal=document.getElementById('rb-demo-modal');
+  var player=document.getElementById('rb-demo-video');
+  var close=document.getElementById('rb-demo-close');
+  var priorFocus=null;
+  function closeDemo(){player.pause();player.removeAttribute('src');player.load();modal.hidden=true;if(priorFocus)priorFocus.focus();}
+  close.addEventListener('click',closeDemo);
+  modal.addEventListener('click',function(e){if(e.target===modal)closeDemo();});
+  document.addEventListener('keydown',function(e){if(!modal.hidden&&e.key==='Escape')closeDemo();});
+  document.querySelectorAll('.rb-logic-iphone[data-demo-src]').forEach(function(phone){
+    var src=phone.getAttribute('data-demo-src');
+    var btn=document.createElement('button');btn.type='button';btn.className='rb-demo-action';btn.hidden=true;
+    btn.textContent='▶ Watch Demo';btn.setAttribute('aria-label','Watch '+phone.getAttribute('data-demo-label')+' demonstration');
+    phone.appendChild(btn);
+    btn.addEventListener('click',function(){priorFocus=btn;player.src=src;modal.hidden=false;close.focus();player.play().catch(function(){});});
+    // Activates automatically when the matching video file exists on the site.
+    fetch(src,{method:'HEAD'}).then(function(r){if(r.ok&&(/video|octet-stream/i.test(r.headers.get('content-type')||'')))btn.hidden=false;}).catch(function(){});
+  });
+})();
+</script>
 </body>
 										</html><!-- mnbnbxmbzxmncbzxc -->
 									</div>
