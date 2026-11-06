@@ -967,7 +967,7 @@
 .rb-demo-modal[hidden]{display:none}
 .rb-demo-modal{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.9)}
 .rb-demo-dialog{width:min(100%,400px);position:relative;display:flex;flex-direction:column;align-items:center;gap:12px}
-.rb-demo-dialog video{display:block;width:auto;max-width:100%;max-height:78dvh;aspect-ratio:512/1106;background:#000;border-radius:20px}
+.rb-demo-dialog video,.rb-demo-dialog iframe{display:block;width:min(100%,350px);max-width:100%;max-height:78dvh;aspect-ratio:9/16;background:#000;border:0;border-radius:20px}
 .rb-demo-close{align-self:flex-end;color:white;background:#252525;border:1px solid #777;border-radius:999px;padding:10px 16px;font:700 14px Arial,sans-serif;cursor:pointer}
 
 </style>
@@ -984,7 +984,7 @@
  </div>
 </div>
 <!-- POTENTIAL Phone: real Reseller Bro screenshot -->
-<div class="rb-logic-iphone potential" data-demo-src="assets/videos/resellerbro-potential-demo.mp4" data-demo-label="Potential Flip">
+<div class="rb-logic-iphone potential" data-demo-src="assets/videos/resellerbro-potential-demo.mp4" data-youtube-id="-LADX1M5Zf4" data-demo-label="Potential Flip">
  <div class="rb-logic-iphone-frame">
   <div class="rb-logic-iphone-btn-left"></div><div class="rb-logic-iphone-btn-left2"></div><div class="rb-logic-iphone-btn-left3"></div><div class="rb-logic-iphone-btn-right"></div>
   <div class="rb-logic-iphone-screen rb-real-app-screen"><img src="assets/images/resellerbro-potential-screen.webp" alt="Reseller Bro Potential Flip result showing active listings" loading="lazy" decoding="async"></div>
@@ -1009,27 +1009,39 @@
 <div class="rb-demo-modal" id="rb-demo-modal" hidden role="presentation">
   <div class="rb-demo-dialog" role="dialog" aria-modal="true" aria-label="Reseller Bro feature demonstration">
     <button class="rb-demo-close" type="button" id="rb-demo-close" aria-label="Close demonstration">✕ Close video</button>
-    <video id="rb-demo-video" controls playsinline preload="none" aria-label="Feature demonstration"></video>
+    <video id="rb-demo-video" controls playsinline preload="none" aria-label="Feature demonstration" hidden></video>
+    <iframe id="rb-demo-youtube" title="Reseller Bro Potential Flip demonstration" allow="autoplay; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen hidden></iframe>
   </div>
 </div>
 <script>
 (function(){
   var modal=document.getElementById('rb-demo-modal');
   var player=document.getElementById('rb-demo-video');
+  var youtube=document.getElementById('rb-demo-youtube');
   var close=document.getElementById('rb-demo-close');
   var priorFocus=null;
-  function closeDemo(){player.pause();player.removeAttribute('src');player.load();modal.hidden=true;if(priorFocus)priorFocus.focus();}
+  function closeDemo(){player.pause();player.removeAttribute('src');player.load();youtube.removeAttribute('src');youtube.hidden=true;player.hidden=true;modal.hidden=true;if(priorFocus)priorFocus.focus();}
   close.addEventListener('click',closeDemo);
   modal.addEventListener('click',function(e){if(e.target===modal)closeDemo();});
   document.addEventListener('keydown',function(e){if(!modal.hidden&&e.key==='Escape')closeDemo();});
   document.querySelectorAll('.rb-logic-iphone[data-demo-src]').forEach(function(phone){
     var src=phone.getAttribute('data-demo-src');
+    var youtubeId=phone.getAttribute('data-youtube-id');
     var btn=document.createElement('button');btn.type='button';btn.className='rb-demo-action';btn.hidden=true;
     btn.textContent='▶ Watch Demo';btn.setAttribute('aria-label','Watch '+phone.getAttribute('data-demo-label')+' demonstration');
     phone.appendChild(btn);
-    btn.addEventListener('click',function(){priorFocus=btn;player.src=src;modal.hidden=false;close.focus();player.play().catch(function(){});});
+    btn.addEventListener('click',function(){
+      priorFocus=btn;modal.hidden=false;
+      if(youtubeId){
+        player.hidden=true;youtube.hidden=false;
+        // Privacy-enhanced embed removes the Shorts-page chrome; some YouTube branding remains.
+        youtube.src='https://www.youtube-nocookie.com/embed/'+encodeURIComponent(youtubeId)+'?autoplay=1&playsinline=1&controls=0&rel=0';
+      }else{youtube.hidden=true;player.hidden=false;player.src=src;player.play().catch(function(){});}
+      close.focus();
+    });
     // Activates automatically when the matching video file exists on the site.
-    fetch(src,{method:'HEAD'}).then(function(r){if(r.ok&&(/video|octet-stream/i.test(r.headers.get('content-type')||'')))btn.hidden=false;}).catch(function(){});
+    if(youtubeId){btn.hidden=false;}
+    else {fetch(src,{method:'HEAD'}).then(function(r){if(r.ok&&(/video|octet-stream/i.test(r.headers.get('content-type')||'')))btn.hidden=false;}).catch(function(){});}
   });
 })();
 </script>
