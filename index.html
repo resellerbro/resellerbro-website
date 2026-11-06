@@ -967,7 +967,11 @@
 .rb-demo-modal[hidden]{display:none}
 .rb-demo-modal{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.9)}
 .rb-demo-dialog{width:min(100%,400px);position:relative;display:flex;flex-direction:column;align-items:center;gap:12px}
-.rb-demo-dialog video,.rb-demo-dialog iframe{display:block;width:min(100%,350px);max-width:100%;max-height:78dvh;aspect-ratio:9/16;background:#000;border:0;border-radius:20px}
+.rb-demo-dialog video,.rb-demo-dialog iframe{display:block;width:min(88vw,350px)!important;height:min(78dvh,622px)!important;max-width:100%;max-height:78dvh;aspect-ratio:9/16;min-height:0;object-fit:contain;position:static!important;transform:none!important;margin:0 auto;background:#000;border:0;border-radius:20px}
+.rb-demo-dialog iframe[hidden],.rb-demo-dialog video[hidden]{display:none!important}
+.rb-demo-modal{overflow-y:auto;overscroll-behavior:contain}
+.rb-demo-dialog{margin:auto;justify-content:center;min-height:0}
+@media(max-height:720px){.rb-demo-dialog video,.rb-demo-dialog iframe{height:calc(100dvh - 128px)!important;width:min(88vw,calc((100dvh - 128px)*9/16))!important}}
 .rb-demo-close{align-self:flex-end;color:white;background:#252525;border:1px solid #777;border-radius:999px;padding:10px 16px;font:700 14px Arial,sans-serif;cursor:pointer}
 
 </style>
