@@ -1577,6 +1577,9 @@
 											<div class="field" data-type="text">
 												<input type="text" name="creativeAlias" id="form03-creativeAlias" placeholder="Full Name / Alias" maxlength="256" required />
 											</div>
+											<div class="field" data-type="email">
+												<input type="email" name="email" id="form03-email" placeholder="Contact Email Address" maxlength="128" autocomplete="email" required />
+											</div>
 											<div class="field" data-type="text">
 												<input type="text" name="primaryHandle" id="form03-primaryHandle" placeholder="Primary Handle (eBay, Instagram or TikTok etc)" maxlength="256" required />
 											</div>
@@ -1594,8 +1597,24 @@
 												<input type="number" name="audienceSize" id="form03-audienceSize" placeholder="Total Followers / Audience Size" maxlength="128" data-category="integer" step="1" required />
 											</div>
 											<div class="field" data-type="select">
+												<select name="resaleCategory" id="form03-resaleCategory" required>
+													<option value="">&ndash; Primary Resale Category &ndash;</option>
+													<option value="Hats &amp; Headwear">Hats &amp; Headwear</option>
+													<option value="Sneakers &amp; Footwear">Sneakers &amp; Footwear</option>
+													<option value="Clothing &amp; Apparel">Clothing &amp; Apparel</option>
+													<option value="Electronics &amp; Devices">Electronics &amp; Devices</option>
+													<option value="Collectibles &amp; Trading Cards">Collectibles &amp; Trading Cards</option>
+													<option value="Toys &amp; Games">Toys &amp; Games</option>
+													<option value="Home &amp; Kitchen">Home &amp; Kitchen</option>
+													<option value="Books &amp; Media">Books &amp; Media</option>
+													<option value="Jewelry &amp; Accessories">Jewelry &amp; Accessories</option>
+													<option value="Other">Other</option>
+												</select>
+											</div>
+											<div class="field" data-type="select">
 												<select name="sourcingFocus" id="form03-sourcingFocus" required>
 													<option value="">&ndash; Active Sourcing Focus Areas &ndash;</option>
+													<option value="Hats & Headwear">Hats & Headwear</option>
 													<option value="Sneakers & Footwear">Sneakers & Footwear</option>
 													<option value="Electronics & Devices">Electronics & Devices</option>
 													<option value="Vintage Apparel">Vintage Apparel</option>
