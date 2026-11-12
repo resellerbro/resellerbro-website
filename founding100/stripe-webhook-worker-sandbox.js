@@ -181,6 +181,25 @@ export default {async fetch(request,env){
     catch(error){console.error('Affiliate sync failed',String(error));return reply({error:'Affiliate sync failed'},503);}
     return reply({ok:true,synced:statements.length});
   }
+  if(path==='/admin/affiliates/dashboard'&&request.method==='POST'){
+    const expected=env.AFFILIATE_SYNC_SECRET;
+    const supplied=request.headers.get('authorization')||'';
+    if(!expected||supplied!=='Bearer '+expected)return reply({error:'Unauthorized'},401);
+    let payload;try{payload=await request.json();}catch{return reply({error:'Invalid JSON'},400);}
+    const code=str(payload.referral_code,20).toUpperCase();
+    const email=str(payload.affiliate_email,254).toLowerCase();
+    if(!/^[A-Z][A-Z0-9]{2,19}$/.test(code)||!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))return reply({error:'Invalid creator'},400);
+    const affiliate=await env.FOUNDING_DB.prepare('SELECT referral_code,affiliate_email,commission_rate_bps,active FROM founding_affiliates WHERE referral_code=? AND lower(affiliate_email)=?').bind(code,email).first();
+    if(!affiliate)return reply({error:'Creator not found'},404);
+    const [referrals,totals,commissions,payouts]=await Promise.all([
+      env.FOUNDING_DB.prepare("SELECT COUNT(*) AS count FROM founding_reservations WHERE referral_code=? AND stripe_mode=?").bind(code,env.STRIPE_MODE).first(),
+      env.FOUNDING_DB.prepare("SELECT COALESCE(SUM(CASE WHEN status='pending' THEN commission_amount_cents ELSE 0 END),0) AS pending_cents, COALESCE(SUM(CASE WHEN status='paid' THEN commission_amount_cents ELSE 0 END),0) AS paid_cents, COALESCE(SUM(CASE WHEN status='reversed' THEN commission_amount_cents ELSE 0 END),0) AS reversed_cents, COALESCE(SUM(commission_amount_cents),0) AS earned_cents FROM creator_commissions WHERE referral_code=?").bind(code).first(),
+      env.FOUNDING_DB.prepare("SELECT c.id,c.payment_type,c.gross_amount_cents,c.commission_amount_cents,c.currency,c.status,c.created_at,r.customer_email FROM creator_commissions c LEFT JOIN founding_reservations r ON r.id=c.founding_reservation_id WHERE c.referral_code=? ORDER BY c.created_at DESC LIMIT 100").bind(code).all(),
+      env.FOUNDING_DB.prepare("SELECT amount_cents,currency,period_start,period_end,payout_reference,created_at,status FROM creator_payouts WHERE referral_code=? ORDER BY created_at DESC LIMIT 50").bind(code).all()
+    ]);
+    const maskEmail=value=>{const v=str(value,254).toLowerCase(),at=v.indexOf('@');if(at<1)return '';return v[0]+'***'+v.slice(at);};
+    return reply({creator:{referral_code:affiliate.referral_code,commission_rate_bps:Number(affiliate.commission_rate_bps),active:!!affiliate.active},referrals:Number(referrals?.count||0),totals:{pending_cents:Number(totals?.pending_cents||0),paid_cents:Number(totals?.paid_cents||0),reversed_cents:Number(totals?.reversed_cents||0),earned_cents:Number(totals?.earned_cents||0)},commissions:(commissions.results||[]).map(row=>({...row,customer_email_masked:maskEmail(row.customer_email),customer_email:undefined,gross_amount_cents:Number(row.gross_amount_cents),commission_amount_cents:Number(row.commission_amount_cents)})),payouts:(payouts.results||[]).map(row=>({...row,amount_cents:Number(row.amount_cents)})),currency:'usd',stripe_mode:env.STRIPE_MODE});
+  }
   if(path==='/stripe/webhook'&&request.method==='POST')return webhook(request,env);
   if(path==='/founding/checkout'&&request.method==='POST')return checkout(request,env);
   if(path==='/founding/confirmation'&&request.method==='GET')return confirmation(request,env);
