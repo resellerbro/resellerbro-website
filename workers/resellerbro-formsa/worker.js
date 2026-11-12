@@ -88,9 +88,7 @@ async function sendSignupNotification(env, data) {
     `Handle: ${clean(data.primary_handle, 256) || "Not provided"}`,
     `Channel: ${clean(data.core_channel, 100) || "Not provided"}`,
     `Audience: ${clean(String(data.audience_size ?? ""), 100) || "Not provided"}`,
-    `Category: ${clean(data.resale_category, 100) || "Not provided"}`,
-    `Sourcing Focus: ${clean(data.sourcing_focus, 100) || "Not provided"}`,
-    `Message: ${
+    `Category: ${clean(data.resale_category, 100) || "Not provided"}`,    `Message: ${
       clean(data.message || data.application_message, 2000) ||
       "Not provided"
     }`
