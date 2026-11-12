@@ -158,6 +158,27 @@ export default {async fetch(request,env){
   }
   if(!isConfigured(env))return reply({error:'Payment integration not configured'},503);
   if(path==='/founding/test'&&request.method==='GET'&&env.STRIPE_MODE==='test')return new Response("<!doctype html><html lang=\"en\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Founding 500 — Sandbox Test</title><style>body{background:#101014;color:#f5f5f5;font:16px system-ui;margin:0;padding:40px 18px}main{max-width:430px;margin:auto}h1{color:#ff9b25}label{display:block;margin:20px 0 6px}input{box-sizing:border-box;width:100%;padding:13px;border:1px solid #777;border-radius:8px;background:#222;color:white}button{background:#ff9b25;border:0;border-radius:8px;padding:15px;width:100%;margin-top:24px;font-weight:700;cursor:pointer}small{color:#bcbcbc}#status{min-height:28px;color:#ffd08b}</style><main><h1>Founding 500</h1><p><strong>STRIPE SANDBOX — NO REAL MONEY</strong></p><p>Test the $7.99 reservation checkout. This page is separate from the live website.</p><form id=\"form\"><label for=\"name\">Test name</label><input id=\"name\" autocomplete=\"name\" required maxlength=\"200\" value=\"Founding Test\"><label for=\"email\">Test email</label><input id=\"email\" type=\"email\" autocomplete=\"email\" required maxlength=\"254\" placeholder=\"test@example.com\"><button id=\"go\" type=\"submit\">Open $7.99 test checkout</button></form><p id=\"status\" role=\"status\"></p><small>Use Stripe test card 4242 4242 4242 4242, any future expiration, and any CVC. Do not use a real card.</small></main><script>document.getElementById('form').addEventListener('submit',async e=>{e.preventDefault();const b=document.getElementById('go'),s=document.getElementById('status');b.disabled=true;s.textContent='Creating secure Stripe test checkout...';try{const r=await fetch('/founding/checkout',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name:document.getElementById('name').value,email:document.getElementById('email').value,request_id:crypto.randomUUID()})});const d=await r.json();if(!r.ok||!d.url)throw Error(d.error||'Checkout unavailable');const u=new URL(d.url);if(u.protocol!=='https:'||!u.hostname.endsWith('.stripe.com'))throw Error('Unexpected checkout destination');location.assign(d.url)}catch(err){s.textContent=err.message;b.disabled=false}})</script></html>",{headers:{'content-type':'text/html; charset=utf-8','cache-control':'no-store','x-robots-tag':'noindex, nofollow','content-security-policy':"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'"}});
+  if(path==='/admin/affiliates/sync'&&request.method==='POST'){
+    const expected=env.AFFILIATE_SYNC_SECRET;
+    const supplied=request.headers.get('authorization')||'';
+    if(!expected||supplied!=='Bearer '+expected)return reply({error:'Unauthorized'},401);
+    let payload;try{payload=await request.json();}catch{return reply({error:'Invalid JSON'},400);}
+    if(!Array.isArray(payload.affiliates)||payload.affiliates.length>500)return reply({error:'Invalid affiliate list'},400);
+    const seen=new Set(), statements=[];
+    for(const item of payload.affiliates){
+      const code=str(item?.referral_code,20).toUpperCase();
+      const email=str(item?.affiliate_email,254).toLowerCase();
+      const active=item?.active===true?1:0;
+      if(!/^[A-Z][A-Z0-9]{2,19}$/.test(code)||!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)||seen.has(code))return reply({error:'Invalid or duplicate affiliate'},400);
+      seen.add(code);
+      statements.push(env.FOUNDING_DB.prepare(`INSERT INTO founding_affiliates(referral_code,affiliate_email,commission_rate_bps,active)
+        VALUES(?,?,3000,?) ON CONFLICT(referral_code) DO UPDATE SET
+        affiliate_email=excluded.affiliate_email,commission_rate_bps=3000,active=excluded.active`).bind(code,email,active));
+    }
+    try{if(statements.length)await env.FOUNDING_DB.batch(statements);}
+    catch(error){console.error('Affiliate sync failed',String(error));return reply({error:'Affiliate sync failed'},503);}
+    return reply({ok:true,synced:statements.length});
+  }
   if(path==='/stripe/webhook'&&request.method==='POST')return webhook(request,env);
   if(path==='/founding/checkout'&&request.method==='POST')return checkout(request,env);
   if(path==='/founding/confirmation'&&request.method==='GET')return confirmation(request,env);
