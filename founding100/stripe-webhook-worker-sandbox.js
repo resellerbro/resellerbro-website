@@ -30,8 +30,11 @@ async function checkout(request,env){
   const sandboxOrigin='https://resellerbro-founding100-test.gisttttt.workers.dev';
   if(origin!==env.SITE_ORIGIN && !(env.STRIPE_MODE==='test' && origin===sandboxOrigin))return reply({error:'Invalid origin'},403);
   let payload;try{payload=await request.json();}catch{return reply({error:'Invalid JSON'},400);}
-  const email=str(payload.email,254).toLowerCase(),name=str(payload.name,200),referral=str(payload.referral_code,64).toUpperCase();
+  const email=str(payload.email,254).toLowerCase(),name=str(payload.name,200),referralCandidate=str(payload.referral_code,64).toUpperCase();
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return reply({error:'Valid email required'},400);
+  // Only active affiliate codes are retained. Unknown, mistyped, or paused codes receive no attribution.
+  const affiliate=referralCandidate ? await env.FOUNDING_DB.prepare('SELECT referral_code FROM founding_affiliates WHERE referral_code=? AND active=1').bind(referralCandidate).first() : null;
+  const referral=affiliate?.referral_code || '';
   // Idempotency key is client-supplied UUID; one hold per request. Limit request size and add Turnstile/rate limiting before production.
   const token=str(payload.request_id,64);
   if(!/^[0-9a-f-]{36}$/i.test(token))return reply({error:'Invalid request ID'},400);
@@ -112,6 +115,18 @@ async function webhook(request,env){
     await env.FOUNDING_DB.batch([
       env.FOUNDING_DB.prepare("INSERT INTO founding_reservations(stripe_checkout_session_id,stripe_payment_intent_id,stripe_customer_id,customer_email,customer_name,referral_code,amount_paid_cents,currency,status,stripe_mode) VALUES (?,?,?,?,?,?,?,?,?,?) ON CONFLICT(stripe_checkout_session_id) DO NOTHING").bind(s.id,typeof s.payment_intent==='string'?s.payment_intent:null,typeof s.customer==='string'?s.customer:null,email,str(s.customer_details?.name,200),hold.referral_code||'',799,'usd','paid',env.STRIPE_MODE),
       env.FOUNDING_DB.prepare('DELETE FROM founding_checkout_holds WHERE checkout_session_id=?').bind(s.id),
+      env.FOUNDING_DB.prepare(`INSERT INTO creator_commissions(
+        referral_code,affiliate_email,payment_type,founding_reservation_id,stripe_checkout_session_id,
+        stripe_payment_intent_id,gross_amount_cents,commission_rate_bps,commission_amount_cents,currency,status
+      )
+      SELECT a.referral_code,a.affiliate_email,'founding_reservation',r.id,r.stripe_checkout_session_id,
+        r.stripe_payment_intent_id,r.amount_paid_cents,a.commission_rate_bps,
+        CAST(ROUND(r.amount_paid_cents * a.commission_rate_bps / 10000.0) AS INTEGER),
+        r.currency,'pending'
+      FROM founding_reservations r
+      JOIN founding_affiliates a ON a.referral_code=r.referral_code AND a.active=1
+      WHERE r.stripe_checkout_session_id=? AND r.status='paid' AND r.stripe_mode=? AND r.referral_code<>''
+      ON CONFLICT DO NOTHING`).bind(s.id,env.STRIPE_MODE),
       env.FOUNDING_DB.prepare('INSERT OR IGNORE INTO founding_webhook_events(stripe_event_id,event_type,stripe_mode) VALUES(?,?,?)').bind(event.id,event.type,env.STRIPE_MODE)
     ]);
   }catch(err){console.error('Payment not recorded; requires reconciliation',s.id,String(err));return reply({error:'Unable to record payment'},500);}
