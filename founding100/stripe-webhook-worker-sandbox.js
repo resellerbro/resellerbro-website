@@ -192,7 +192,7 @@ export default {async fetch(request,env){
     const affiliate=await env.FOUNDING_DB.prepare('SELECT referral_code,affiliate_email,commission_rate_bps,active FROM founding_affiliates WHERE referral_code=? AND lower(affiliate_email)=?').bind(code,email).first();
     if(!affiliate)return reply({error:'Creator not found'},404);
     const [referrals,totals,commissions,payouts]=await Promise.all([
-      env.FOUNDING_DB.prepare("SELECT COUNT(*) AS count FROM founding_reservations WHERE referral_code=? AND stripe_mode=?").bind(code,env.STRIPE_MODE).first(),
+      env.FOUNDING_DB.prepare("SELECT COUNT(*) AS count FROM founding_reservations WHERE referral_code=? AND stripe_mode=? AND status='paid'").bind(code,env.STRIPE_MODE).first(),
       env.FOUNDING_DB.prepare("SELECT COALESCE(SUM(CASE WHEN status='pending' THEN commission_amount_cents ELSE 0 END),0) AS pending_cents, COALESCE(SUM(CASE WHEN status='paid' THEN commission_amount_cents ELSE 0 END),0) AS paid_cents, COALESCE(SUM(CASE WHEN status='reversed' THEN commission_amount_cents ELSE 0 END),0) AS reversed_cents, COALESCE(SUM(commission_amount_cents),0) AS earned_cents FROM creator_commissions WHERE referral_code=?").bind(code).first(),
       env.FOUNDING_DB.prepare("SELECT c.id,c.payment_type,c.gross_amount_cents,c.commission_amount_cents,c.currency,c.status,c.created_at,r.customer_email FROM creator_commissions c LEFT JOIN founding_reservations r ON r.id=c.founding_reservation_id WHERE c.referral_code=? ORDER BY c.created_at DESC LIMIT 100").bind(code).all(),
       env.FOUNDING_DB.prepare("SELECT amount_cents,currency,period_start,period_end,payout_reference,created_at,status FROM creator_payouts WHERE referral_code=? ORDER BY created_at DESC LIMIT 50").bind(code).all()
