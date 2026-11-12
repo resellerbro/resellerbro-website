@@ -169,7 +169,7 @@ export default {async fetch(request,env){
       const code=str(item?.referral_code,20).toUpperCase();
       const email=str(item?.affiliate_email,254).toLowerCase();
       const active=item?.active===true?1:0;
-      if(!/^[A-Z][A-Z0-9]{2,19}$/.test(code)||!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)||seen.has(code))return reply({error:'Invalid or duplicate affiliate'},400);
+      if(!/^[A-Z][A-Z0-9]{2,19}$/.test(code)||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||seen.has(code))return reply({error:'Invalid or duplicate affiliate'},400);
       seen.add(code);
       statements.push(env.FOUNDING_DB.prepare(`INSERT INTO founding_affiliates(referral_code,affiliate_email,commission_rate_bps,active)
         VALUES(?,?,3000,?) ON CONFLICT(referral_code) DO UPDATE SET
