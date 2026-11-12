@@ -6,7 +6,7 @@
   const definitions = {
     form01: () => ({ form: "founder", message: document.getElementById("form01-ama").value }),
     form02: () => ({ form: "beta", name: document.getElementById("form02-name").value, email: document.getElementById("form02-email").value, resale_category: document.getElementById("form02-iama").value, signup_source: "founder-signup" }),
-    form03: () => ({ form: "partner", name: document.getElementById("form03-creativeAlias").value, primary_handle: document.getElementById("form03-primaryHandle").value, core_channel: document.getElementById("form03-coreChannel").value, audience_size: document.getElementById("form03-audienceSize").value, sourcing_focus: document.getElementById("form03-sourcingFocus").value, application_message: document.getElementById("form03-whyFoundingPartner").value }),
+    form03: () => ({ form: "partner", name: document.getElementById("form03-creativeAlias").value, email: document.getElementById("form03-email").value, primary_handle: document.getElementById("form03-primaryHandle").value, core_channel: document.getElementById("form03-coreChannel").value, audience_size: document.getElementById("form03-audienceSize").value, resale_category: document.getElementById("form03-resaleCategory").value, application_message: document.getElementById("form03-whyFoundingPartner").value }),
     form04: () => ({ form: "waitlist", email: document.getElementById("form04-email").value, signup_source: "website-waitlist" })
   };
   function init() {
