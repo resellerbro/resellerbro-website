@@ -1480,10 +1480,10 @@
 								<div class="inner">
 									<p id="text44" class="text-component instance-44"><mark>FOUNDING RATE RESERVED FOR FIRST 500 PAID MEMBERS</mark></p>
 									<p id="text22" class="text-component instance-22">Join <mark>THE FOUNDING 500</mark></p>
-									<p id="text08" class="text-component instance-8"><strong>$7.99/month — your founding rate while subscribed.</strong> Limited to the first 500 confirmed paid founding memberships. Free beta comes first. Choose how you would like to join below.</p>
-									<div class="rb-founding-single" aria-label="Founding 500 membership options">
+									<p id="text08" class="text-component instance-8"><strong>$7.99/month founding rate • 60 scans per billing month.</strong> Reserve your place with a one-time $7.99 payment today. At launch, activate your paid membership to receive your monthly scans. Your reservation is credited toward your first paid month. No recurring charge starts today.</p>
+									<div class="rb-founding-single" aria-label="Founding 500 reservation and free-list options">
 										<p class="rb-founding-single-title">OPTION 1 — RESERVE A PAID FOUNDING SPOT</p>
-										<p><strong>One-time $7.99 reservation.</strong> Secure one of 500 founding spots and lock in the $7.99/month founding rate while subscribed. Your reservation payment is credited toward your first paid month. This is not a recurring charge today.</p>
+										<p><strong>One-time $7.99 reservation.</strong> Hold your place and founding rate. At launch, activate your $7.99/month subscription to receive <strong>60 scans per billing month</strong>. Your reservation is credited toward your first paid month. No recurring charge starts today.</p>
 										<button type="button" class="rb-founding-pay-disabled" id="rb-founding-reserve-button">[ RESERVE MY FOUNDING SPOT — $7.99 ]</button>
 										<div id="rb-founding-checkout-fields" hidden style="margin:1rem 0;text-align:left">
 											<label for="rb-founding-pay-name">Your name</label>
@@ -1716,11 +1716,11 @@
 		<div id="rb-founders-confirmation" hidden role="dialog" aria-modal="true" aria-labelledby="rb-confirm-title">
 			<div class="rb-confirm-card">
 				<div style="font-size:44px" aria-hidden="true">🎉</div>
-				<div id="rb-confirm-badge" class="rb-member-badge">FOUNDING 500 MEMBER</div>
-				<h2 id="rb-confirm-title">YOU'RE OFFICIALLY ONE OF THE FOUNDING 500!</h2>
+				<div id="rb-confirm-badge" class="rb-member-badge">FOUNDING 500 RESERVATION CONFIRMED</div>
+				<h2 id="rb-confirm-title">YOUR FOUNDING 500 RESERVATION IS CONFIRMED!</h2>
 				<p id="rb-confirm-name"></p>
-				<p>Welcome to Reseller Bro! Your <strong>$7.99 reservation</strong> is confirmed, and your <strong>$7.99/month founding rate</strong> is locked in while your membership remains active.</p>
-				<p>Your reservation payment will be credited toward your first paid month when we launch. No recurring charge starts today.</p>
+				<p>Welcome to Reseller Bro! Your <strong>one-time $7.99 reservation</strong> is confirmed, and your <strong>$7.99/month founding rate</strong> is reserved.</p>
+				<p>At launch, you will activate your paid subscription separately. It includes <strong>60 scans per billing month</strong>, and your reservation payment will be credited toward your first paid month. No recurring charge starts today.</p>
 				<p style="color:#ffbb56;font-weight:700">You're part of the original crew. 👊</p>
 				<a id="rb-confirm-close" href="https://resellerbro.onrender.com" style="display:inline-block;margin-top:18px;padding:13px 20px;background:#ff9900;border:0;border-radius:8px;color:#111;font-weight:800;text-decoration:none">OPEN RESELLER BRO APP</a>
 			</div>
@@ -1744,8 +1744,8 @@
 				}
 			}
 			if(preview){
-				document.getElementById('rb-confirm-badge').textContent='PREVIEW ONLY — SAMPLE MEMBER #001';
-				document.getElementById('rb-confirm-title').textContent='FOUNDING 500 CELEBRATION PREVIEW';
+				document.getElementById('rb-confirm-badge').textContent='PREVIEW ONLY — SAMPLE RESERVATION #001';
+				document.getElementById('rb-confirm-title').textContent='FOUNDING 500 RESERVATION PREVIEW';
 				document.getElementById('rb-confirm-name').textContent='Congratulations! This is a visual demonstration only.';
 				var card=overlay.querySelector('.rb-confirm-card');
 				var notice=document.createElement('p');
@@ -1763,7 +1763,7 @@
 					var data=await response.json();
 					if(!data.confirmed){if(++attempts<6)setTimeout(verify,2000);return;}
 					document.getElementById('rb-confirm-name').textContent=data.name?'Congratulations, '+data.name+'!':'';
-					if(Number.isInteger(data.member_number)&&data.member_number>=1&&data.member_number<=500)document.getElementById('rb-confirm-badge').textContent='FOUNDING MEMBER #'+String(data.member_number).padStart(3,'0');
+					if(Number.isInteger(data.member_number)&&data.member_number>=1&&data.member_number<=500)document.getElementById('rb-confirm-badge').textContent='FOUNDING RESERVATION #'+String(data.member_number).padStart(3,'0');
 					showCelebration();
 				}catch(e){if(++attempts<6)setTimeout(verify,2000);}
 			}
