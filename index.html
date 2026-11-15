@@ -111,6 +111,34 @@
 			/* All orange CTA links and submit buttons use white labels; preserve loading states. */
 			.buttons-component > li > a,
 			.form-component .actions button:not(.waiting) { color: #ffffff !important; }
+			/* Founding 500: make the paid membership the clear primary action. */
+			#container16 { padding-top: clamp(2.5rem, 6vw, 5rem) !important; padding-bottom: clamp(2.5rem, 6vw, 5rem) !important; }
+			#container16 #text44 { font-size: clamp(1rem, 1.7vw, 1.25rem) !important; letter-spacing: .08em; line-height: 1.4 !important; margin-bottom: .8rem !important; }
+			#container16 #text22 { font-size: clamp(2.5rem, 5.6vw, 4.6rem) !important; line-height: 1.05 !important; margin: .25rem auto 1rem !important; }
+			#container16 #text08 { max-width: 900px; margin: 0 auto 2rem !important; padding: 0 1rem; font-size: clamp(1.08rem, 1.8vw, 1.4rem) !important; line-height: 1.7 !important; }
+			#container16 .rb-founding-single { width: min(100% - 2rem, 820px); margin: 2rem auto 1.5rem; padding: clamp(1.5rem, 4vw, 3rem); border-width: 2px; border-color: rgba(255,153,0,.9); box-shadow: 0 12px 42px rgba(0,0,0,.35), 0 0 28px rgba(255,153,0,.08); }
+			#container16 .rb-founding-single > p { max-width: 690px; font-size: clamp(1.05rem, 1.7vw, 1.28rem); line-height: 1.75; }
+			#container16 .rb-founding-single .rb-founding-single-title { font-family: 'Bebas Neue',sans-serif; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.1; letter-spacing: .04em; margin: 0 auto 1rem !important; }
+			#container16 .rb-founding-pay-disabled { min-height: 78px; padding: 1.15rem 1.5rem; margin: 1.6rem auto; border: 2px solid #ff9900; border-radius: 9px; background: #ff9900; box-shadow: 0 7px 22px rgba(255,153,0,.24); font-size: clamp(1.05rem, 2vw, 1.35rem); line-height: 1.25; letter-spacing: .025em; transition: transform .18s ease, box-shadow .18s ease, background .18s ease; }
+			#container16 .rb-founding-pay-disabled:hover { transform: translateY(-2px); background: #ffad24; box-shadow: 0 10px 28px rgba(255,153,0,.32); }
+			#container16 .rb-founding-single .rb-founding-single-note { max-width: 680px; font-size: clamp(.92rem, 1.3vw, 1.05rem); line-height: 1.65; }
+			#container16 .rb-founding-divider { margin: 2.3rem 0 1.25rem; font-size: clamp(.9rem, 1.3vw, 1.05rem); letter-spacing: .06em; }
+			#container16 #form02 { max-width: 560px; margin: 1.25rem auto .75rem; }
+			#container16 #form02 .field { margin-bottom: .9rem; }
+			#container16 #form02 input, #container16 #form02 select { min-height: 52px; font-size: 1rem; }
+			#container16 #form02 .actions button { width: auto; min-width: min(100%, 330px); min-height: 52px; padding: .8rem 1.25rem; border: 2px solid #ff9900 !important; border-radius: 7px; background: #171717 !important; color: #fff !important; font-size: clamp(.9rem, 1.3vw, 1.05rem); font-weight: 700; letter-spacing: .02em; }
+			#container16 #form02 .actions button:hover { background: #242424 !important; }
+			#container16 #text39 { max-width: 760px; margin: 1rem auto 0 !important; padding: 0 1rem; font-size: clamp(.9rem, 1.3vw, 1.05rem) !important; line-height: 1.65 !important; }
+			@media (max-width: 600px) {
+				#container16 { padding-top: 2.5rem !important; padding-bottom: 2.5rem !important; }
+				#container16 #text22 { font-size: clamp(2.25rem, 10vw, 3.25rem) !important; }
+				#container16 #text08 { font-size: 1.08rem !important; line-height: 1.7 !important; }
+				#container16 .rb-founding-single { width: calc(100% - 1.25rem); padding: 1.35rem 1rem; margin: 1.25rem auto; }
+				#container16 .rb-founding-pay-disabled { min-height: 72px; padding: 1rem .8rem; font-size: 1.05rem; }
+				#container16 #form02 .actions button { width: 100%; min-width: 0; }
+				#container16 .rb-founding-single > p { font-size: 1.02rem; }
+			}
+
 		</style>
 		<noscript><link rel="stylesheet" href="assets/noscript.css" /></noscript>
 	</head>
