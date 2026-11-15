@@ -172,6 +172,14 @@
 				#container16 #form02 .actions button { min-height: 68px !important; font-size: 1.35rem !important; }
 			}
 
+			/* Enlarge only the two Founding 500 signup labels; keep button dimensions and layout unchanged. */
+			#container16 .rb-founding-pay-disabled { font-size: clamp(1.35rem, 2.1vw, 1.6rem) !important; }
+			#container16 #form02 .actions button { font-size: clamp(1.55rem, 2.3vw, 1.75rem) !important; }
+			@media (max-width: 600px) {
+				#container16 .rb-founding-pay-disabled { font-size: 1.35rem !important; }
+				#container16 #form02 .actions button { font-size: 1.55rem !important; }
+			}
+
 		</style>
 		<noscript><link rel="stylesheet" href="assets/noscript.css" /></noscript>
 	</head>
