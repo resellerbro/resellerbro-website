@@ -139,6 +139,39 @@
 				#container16 .rb-founding-single > p { font-size: 1.02rem; }
 			}
 
+		
+			/* Final mobile CTA polish: centered, slightly smaller paid CTA; stronger text-only free-list CTA. */
+			#container16 .rb-founding-pay-disabled {
+				display: flex !important;
+				align-items: center !important;
+				justify-content: center !important;
+				text-align: center !important;
+				font-size: clamp(1rem, 1.55vw, 1.2rem) !important;
+				line-height: 1.2 !important;
+			}
+			#container16 #form02 .actions button {
+				display: flex !important;
+				align-items: center !important;
+				justify-content: center !important;
+				width: 100% !important;
+				min-height: 68px !important;
+				padding: .9rem 1rem !important;
+				font-family: 'Bebas Neue', sans-serif !important;
+				font-size: clamp(1.35rem, 2.2vw, 1.65rem) !important;
+				font-weight: 400 !important;
+				line-height: 1.15 !important;
+				text-align: center !important;
+			}
+			#container16 #form02 .actions button::before,
+			#container16 #form02 .actions button::after {
+				content: none !important;
+				display: none !important;
+			}
+			@media (max-width: 600px) {
+				#container16 .rb-founding-pay-disabled { font-size: 1rem !important; }
+				#container16 #form02 .actions button { min-height: 68px !important; font-size: 1.35rem !important; }
+			}
+
 		</style>
 		<noscript><link rel="stylesheet" href="assets/noscript.css" /></noscript>
 	</head>
