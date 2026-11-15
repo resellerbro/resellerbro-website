@@ -1722,7 +1722,7 @@
 				<p>Welcome to Reseller Bro! Your <strong>$7.99 reservation</strong> is confirmed, and your <strong>$7.99/month founding rate</strong> is locked in while your membership remains active.</p>
 				<p>Your reservation payment will be credited toward your first paid month when we launch. No recurring charge starts today.</p>
 				<p style="color:#ffbb56;font-weight:700">You're part of the original crew. 👊</p>
-				<button id="rb-confirm-close" type="button">VIEW RESELLER BRO WEBSITE</button>
+				<a id="rb-confirm-close" href="https://resellerbro.onrender.com" style="display:inline-block;margin-top:18px;padding:13px 20px;background:#ff9900;border:0;border-radius:8px;color:#111;font-weight:800;text-decoration:none">OPEN RESELLER BRO APP</a>
 			</div>
 		</div>
 		<script>
@@ -1753,7 +1753,7 @@
 				notice.style.cssText='color:#ffbb56;font-weight:800';
 				card.insertBefore(notice,card.querySelector('#rb-confirm-close'));
 				showCelebration();
-				document.getElementById('rb-confirm-close').addEventListener('click',function(){overlay.hidden=true;history.replaceState(null,'',location.pathname+'#flip');});
+				document.getElementById('rb-confirm-close').addEventListener('click',function(event){event.preventDefault();overlay.hidden=true;history.replaceState(null,'',location.pathname+'#flip');});
 				return;
 			}
 			async function verify(){
@@ -1767,7 +1767,7 @@
 					showCelebration();
 				}catch(e){if(++attempts<6)setTimeout(verify,2000);}
 			}
-			document.getElementById('rb-confirm-close').addEventListener('click',function(){overlay.hidden=true;history.replaceState(null,'',location.pathname+'#flip');});
+			document.getElementById('rb-confirm-close').addEventListener('click',function(event){event.preventDefault();window.location.assign('https://resellerbro.onrender.com');});
 			verify();
 		})();
 		</script>
