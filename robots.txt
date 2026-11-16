@@ -2,3 +2,5 @@ User-agent: *
 Allow: /
 
 Sitemap: https://resellerbro.com/sitemap.xml
+
+# Cloudflare Workers Builds deployment test
